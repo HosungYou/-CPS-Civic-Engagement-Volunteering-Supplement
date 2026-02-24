@@ -2,40 +2,30 @@
 
 **To**: sxk75@psu.edu
 **From**: newhosung@gmail.com
-**Subject**: Research Collaboration Proposal — Civic Engagement & Volunteering Study Using CPS-CEV Data
+**Subject**: Research Collaboration Proposal — Volunteering & Civic Engagement Study
 
 ---
 
 Dear Dr. Windon,
 
-I hope this email finds you well. I am writing to propose a collaborative research project that integrates our shared interests in volunteering, civic engagement, and community development.
+I hope you are doing well. I wanted to reach out because I have been thinking a great deal about our previous collaboration on the Master Gardener and Watershed Steward study ("How education shapes volunteer motivation and experience," *Advancements in Agricultural Development*, 2025). Working with you on that paper was a truly invaluable experience for me — I learned so much from your insight and guidance throughout the writing process, and that experience has stayed with me in a very meaningful way.
 
-**Proposed Study:**
-"Heterogeneous Effects of Organized Volunteering on Civic Engagement Across Rural and Urban America: A Three-Phase Machine Learning Approach"
+Inspired by what I learned from our collaboration, I began exploring publicly available datasets that could bridge your area of expertise in volunteerism and Extension education with my interest in advanced analytical methods. After surveying several options, I was able to access the **Current Population Survey — Civic Engagement and Volunteering Supplement (CPS-CEV)** through IPUMS, which provides nationally representative data across four waves (2017, 2019, 2021, 2023) with approximately 280,000 respondents.
 
-**Overview:**
-This study examines *for whom* and *under what conditions* organized volunteering most effectively promotes broader civic participation. Using four waves of the Current Population Survey Civic Engagement and Volunteering Supplement (CPS-CEV; 2017–2023; *N* ≈ 280,000), we apply a novel three-phase analytical framework:
+The research topic I would like to propose is:
 
-- **Phase 1 — Latent Profile Analysis (LPA):** Identifies distinct civic engagement typologies among U.S. adults
-- **Phase 2 — Causal Forest (GRF):** Estimates individual-level heterogeneous causal effects of organized volunteering on civic outcomes, conditional on profile membership and rural/urban residence
-- **Phase 3 — SHAP Values:** Decomposes and visualizes the key drivers of effect heterogeneity
+**"Heterogeneous Effects of Organized Volunteering on Civic Engagement Across Rural and Urban America"**
 
-**Why this collaboration:**
-Your expertise in volunteerism, Extension education, and leadership development provides the essential substantive grounding for this study. Combined with my methodological focus on causal machine learning and person-centered approaches, I believe we can produce a high-impact contribution to the field.
+The central question is: *for whom* and *under what conditions* does organized volunteering most effectively promote broader civic participation — such as political engagement, charitable giving, and community involvement — and how do these effects differ between rural and urban communities?
 
-**Practical implications** will be particularly relevant for Extension educators and volunteer program administrators seeking to maximize the civic development impact of volunteer programming in both rural and urban communities.
+The analytical approach combines person-centered typology identification with causal machine learning and interpretable visualization. I have prepared a preliminary analysis design and code pipeline, but the methodology can certainly be refined based on your input.
 
-**Target Journal:** *Nonprofit and Voluntary Sector Quarterly* (Primary) / *Voluntas* (Secondary)
+I believe your expertise in volunteerism, community development, and Extension education would be essential in shaping the substantive framing of this study. If you would be willing to guide and collaborate on this project, I would be very grateful. Your perspective on how to connect the findings to practical implications for Extension educators and volunteer program administrators would make this work far more meaningful.
 
-**Current Progress:**
-- Analysis design and manuscript draft completed
-- Data extracted from IPUMS CPS (37 variables, 4 waves)
-- Complete code pipeline prepared (R + Python)
-- GitHub repository: https://github.com/HosungYou/-CPS-Civic-Engagement-Volunteering-Supplement
+I have attached a brief abstract and the GitHub repository link for your reference:
+https://github.com/HosungYou/-CPS-Civic-Engagement-Volunteering-Supplement
 
-I have attached the research abstract for your review. I would be happy to schedule a meeting at your convenience to discuss this proposal in detail.
+I would love to schedule a meeting at your convenience to discuss this further. Thank you so much for your time and consideration.
 
-Thank you for considering this collaboration. I look forward to hearing from you.
-
-Best regards,
+Warm regards,
 Hosung You
