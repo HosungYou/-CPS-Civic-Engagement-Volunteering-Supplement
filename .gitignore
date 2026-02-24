@@ -1,0 +1,26 @@
+# Data files (large / restricted-use)
+data/*.rds
+data/*.csv
+data/*.dta
+data/*.sav
+data/*.xml
+
+# R environment
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
