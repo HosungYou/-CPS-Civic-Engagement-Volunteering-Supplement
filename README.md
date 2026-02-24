@@ -18,6 +18,9 @@ This study introduces a three-phase analytical framework combining **Latent Prof
 ├── 02_Manuscript_Draft.md             # Manuscript draft (Markdown)
 ├── 02_Manuscript_Draft.docx           # Manuscript draft (Word)
 ├── 01_Analysis_Design.docx            # Analysis design (Word)
+├── 03_Abstract.md                     # Research abstract (Markdown)
+├── 03_Abstract.docx                   # Research abstract (Word)
+├── email_draft_to_windon.md           # Collaboration email draft
 ├── code/
 │   ├── 00_data_acquisition.R          # CPS-CEV data download and cleaning
 │   ├── 01_descriptive_analysis.R      # Descriptive statistics and EDA
@@ -26,7 +29,10 @@ This study introduces a three-phase analytical framework combining **Latent Prof
 │   ├── 04_shap_analysis.py           # Phase 3: SHAP visualization
 │   └── 05_robustness_checks.R        # Sensitivity analyses
 ├── figures/                           # Output figures
-└── data/                              # Data directory (not tracked)
+└── data/                              # Data files (not tracked on GitHub)
+    ├── cps_00002.csv                  # IPUMS CPS extract (450K records, 46 vars)
+    ├── cps_00001.pdf                  # IPUMS codebook (tracked on GitHub)
+    └── cps_00002.csv.gz              # Compressed original download
 ```
 
 ### Three-Phase Framework
@@ -40,8 +46,11 @@ typology                  effects estimation          decomposition
 
 ### Data
 - **Source**: CPS Civic Engagement & Volunteering Supplement (CEV)
-- **Waves**: 2017, 2019, 2021, 2023
+- **Waves**: September 2017, 2019, 2021, 2023
+- **Records**: 450,039 (46 variables)
 - **Access**: [IPUMS CPS](https://cps.ipums.org) | [AmeriCorps Data](https://data.americorps.gov)
+- **Local path**: `data/cps_00002.csv` (80 MB, not tracked on GitHub per IPUMS terms)
+- **Codebook**: `data/cps_00001.pdf` (tracked on GitHub)
 
 ### Software Requirements
 - R 4.4+ with packages: `tidyLPA`, `grf`, `survey`, `ipumsr`, `tidyverse`
