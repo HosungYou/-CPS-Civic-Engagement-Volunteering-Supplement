@@ -1,51 +1,8 @@
 # Introduction
 
-Civic engagement constitutes a foundational mechanism through which individuals contribute to collective governance, community well-being, and democratic vitality (Putnam, 2000; Verba et al., 1995). From volunteering and charitable giving to political participation and community organizing, the diverse forms of civic action serve as conduits through which citizens translate private concerns into public goods (Zukin et al., 2006). Yet the landscape of civic engagement in the United States has undergone profound transformations over the past decade, driven by demographic shifts, geographic disparities, technological disruption, and the unprecedented shock of the COVID-19 pandemic (Flanagan & Levine, 2010; Lim & Laurence, 2015).
+<!-- Paper: Bowling Alone, Scrolling Together -->
+<!-- Target: NVSQ (10,000 words max) -->
+<!-- Status: Draft from manuscript generator (2026-03-09) -->
+<!-- See: /Downloads/Bowling_Alone_Scrolling_Together_Manuscript_Draft.docx for full draft -->
 
-Within this shifting terrain, volunteering occupies a distinctive position. Unlike voting or charitable giving, organized volunteering demands sustained investment of time, skills, and social energy within formal organizational structures (Wilson, 2000). This investment has traditionally been understood as both an expression of civic commitment and a catalyst for broader civic engagement, as volunteering exposes individuals to community needs, builds social networks, and cultivates civic skills transferable to other domains of participation (Musick & Wilson, 2008). Understanding who volunteers, why, and how volunteering relates to broader patterns of civic life therefore carries direct implications for community development practitioners, Extension educators, and policymakers seeking to strengthen democratic infrastructure.
-
-## The Heterogeneity Problem
-
-A central limitation of existing research on volunteering and civic engagement is its reliance on variable-centered approaches that estimate average effects across populations (Muthén & Muthén, 2000). Regression-based studies have established well-documented associations between volunteering and sociodemographic predictors such as education, income, age, and social connectedness (Wilson, 2012). However, these averaged relationships obscure the fundamental heterogeneity in how individuals combine civic activities. Two individuals may share identical demographic profiles yet exhibit vastly different civic engagement patterns—one a politically active non-volunteer, another a dedicated volunteer who never contacts a public official. These qualitative differences in civic participation styles remain invisible to conventional variable-centered analyses.
-
-Person-centered approaches, by contrast, seek to identify distinct subgroups of individuals who share similar patterns across multiple indicators of engagement (Bergman & Magnusson, 1997). Latent Profile Analysis (LPA) has emerged as a rigorous method for discovering such naturally occurring subgroups, offering an empirically grounded typology of civic engagement rather than imposing a priori categories (Collins & Lanza, 2010). By classifying individuals into profiles based on their observed patterns of political participation, charitable behavior, social interaction, and organizational membership, LPA reveals the person-level configurations that underlie population-level averages.
-
-Yet identifying civic engagement profiles is only a first step. The critical question for practitioners and policymakers is *what predicts membership in these profiles and, within each profile, what predicts volunteering behavior?* This question demands not just classification but interpretable prediction—understanding which demographic, geographic, and contextual factors shape volunteering participation differently across profile types. Traditional regression methods struggle to capture the nonlinear interactions and complex feature dependencies that characterize these relationships (Molnar, 2020).
-
-## Machine Learning for Interpretive Social Science
-
-Recent advances in interpretable machine learning offer new tools for addressing this challenge. SHapley Additive exPlanations (SHAP), grounded in cooperative game theory, provides a principled framework for decomposing a predictive model's output into individual feature contributions (Lundberg & Lee, 2017). When paired with gradient boosting machines (GBMs) that capture nonlinear relationships and high-order interactions, SHAP analysis moves beyond identifying *whether* a variable matters to revealing *how* and *for whom* it matters—precisely the kind of interpretive depth that civic engagement research requires (Lundberg et al., 2020).
-
-This combination of person-centered typology (LPA) and machine learning interpretability (SHAP) represents a methodological innovation in civic engagement research. Rather than asking "what is the average effect of education on volunteering?"—a question that collapses meaningful variation—this framework asks "how does education's role in predicting volunteering differ across distinct types of civic actors?" The result is a more nuanced, contextually grounded understanding of civic participation that can inform targeted interventions.
-
-## The Pennsylvania Context
-
-This study focuses on Pennsylvania, a state whose geographic, demographic, and economic diversity makes it a compelling site for civic engagement research. Pennsylvania encompasses the Philadelphia metropolitan area—the nation's sixth-largest urban core—alongside the rural communities of the Appalachian Plateau and the Ridge-and-Valley region (Pennsylvania State Data Center, 2023). Between these poles lie the mid-sized cities and suburban corridors of Pittsburgh, Harrisburg, Scranton, Lancaster, and Reading, each with distinct economic bases and community structures.
-
-This geographic diversity translates into substantive variation in civic engagement infrastructure. Urban residents have access to dense networks of nonprofit organizations, civic associations, and cultural institutions, while rural communities often rely on informal social ties, faith-based organizations, and Cooperative Extension programs to sustain civic life (Theodori, 2005; Flora & Flora, 2008). Pennsylvania's Extension system, operated through Penn State, has historically played a significant role in rural community development, providing leadership training, 4-H youth development, and community organizing support that directly intersects with volunteering and civic participation (Peters, 2002).
-
-The state also exemplifies broader national trends in demographic transition. Rural Pennsylvania has experienced sustained population aging and outmigration of younger adults, while Philadelphia and Pittsburgh have seen increasing racial and ethnic diversification and economic restructuring (Pennsylvania State Data Center, 2023). These transitions reshape the social ecology of civic engagement, altering the composition of volunteer pools, the nature of community needs, and the pathways through which residents become civically active.
-
-## The COVID-19 Disruption
-
-The temporal span of this study—covering the Current Population Survey's Civic Engagement and Volunteering Supplement in 2017, 2019, 2021, and 2023—provides a natural lens for examining how the COVID-19 pandemic reshaped civic engagement patterns. Preliminary evidence suggests that COVID's impact on civic participation was neither uniform nor unidirectional (Lim & Laurence, 2015). While aggregate volunteering rates initially declined, some forms of community mutual aid surged (Marston et al., 2020). The pandemic may have accelerated preexisting trends—such as the shift toward virtual engagement—while disproportionately disrupting the civic participation of certain demographic groups.
-
-Understanding the pandemic's differential impact across civic engagement profiles is essential for designing responsive community development strategies. If COVID selectively thinned certain types of civic actors while leaving others intact, then post-pandemic recovery efforts require targeted, profile-specific approaches rather than one-size-fits-all outreach.
-
-## Study Purpose and Research Questions
-
-The purpose of this study is to examine the heterogeneous structure and predictors of civic engagement among Pennsylvania adults using a hybrid analytical framework that integrates Latent Profile Analysis with machine learning interpretability methods. Specifically, we pursue four research questions:
-
-**RQ1:** What distinct civic engagement profiles emerge among Pennsylvania adults, and how do these profiles differ in their composition of political, social, and organizational participation?
-
-**RQ2:** How do the predictors of volunteering participation differ across civic engagement profiles, and which demographic, geographic, and contextual factors exhibit the greatest heterogeneity in their predictive importance?
-
-**RQ3:** What factors most strongly predict complete civic disengagement—defined as non-participation in any formal civic activity—and how do civic engagement profiles contribute to understanding disengagement risk?
-
-**RQ4:** How did the COVID-19 pandemic alter the distribution of civic engagement profiles in Pennsylvania, and were these shifts consistent across generational cohorts and geographic contexts?
-
-## Contributions
-
-This study makes three contributions to the literature on civic engagement and volunteering. First, it advances the application of person-centered methodology by employing LPA to identify naturally occurring civic engagement profiles in a state-level population, moving beyond variable-centered averages to reveal the typological structure of civic life. Second, it introduces an interpretable machine learning framework (GBM + SHAP) to civic engagement research, providing granular, feature-level explanations of volunteering prediction that capture nonlinear relationships invisible to conventional regression. Third, by focusing on Pennsylvania and leveraging four waves of CPS data spanning the COVID-19 pandemic, the study offers a temporally and geographically grounded analysis with direct implications for Extension educators, community development practitioners, and state-level policymakers working to strengthen civic infrastructure in diverse rural, suburban, and urban contexts.
-
-The remainder of this paper is organized as follows. The next section reviews the theoretical foundations of civic engagement research, situating the study within the Civic Voluntarism Model, Social Capital Theory, and the Community Capitals Framework while articulating the rationale for a person-centered, machine learning-enhanced approach. The Methods section details the data, operational definitions, LPA procedures, and SHAP analysis framework. The Results section presents civic engagement profiles, profile-stratified volunteering predictors, threshold analysis findings, and COVID-era comparisons. The Discussion section interprets findings within theoretical context, addresses limitations, and outlines implications for research and practice.
+[Content migrated to Word manuscript draft. See discussion/10_0309 for framework overview.]
