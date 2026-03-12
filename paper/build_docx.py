@@ -194,11 +194,13 @@ TABLE_FILES = {
 
 FIGURE_MAP = {
     1: ("figures/pred_prob_soc_gen.png",
-        "Figure 1. Predicted probability of volunteering by in-person socialization level and generation, from survey-weighted logistic regression (Model 1). Shaded bands represent 95% confidence intervals."),
-    2: ("figures/lpa_generation_distribution.png",
-        "Figure 2. Generational distribution across six latent civic engagement profiles."),
-    3: ("figures/shap_all_generations.png",
-        "Figure 3. Feature importance (mean |SHAP|) by generation from gradient boosting model. Socialization frequency ranks first for Gen Z; education ranks first for all other generations."),
+        "Figure 1. Predicted probability of volunteering by in-person socialization frequency and generation, from survey-weighted logistic regression (Model 1). Shaded bands represent 95% confidence intervals. The steep initial rise illustrates the First Step Effect; Gen Z's flattening beyond moderate socialization illustrates the generational plateau."),
+    2: ("figures/lpa_profile_heatmap.png",
+        "Figure 2. Civic engagement profile characteristics from latent profile analysis. Cell values represent indicator means on the original scale; darker shading indicates higher relative values within each indicator."),
+    3: ("figures/lpa_generation_distribution.png",
+        "Figure 3. Generational distribution across six latent civic engagement profiles. Gen Z is disproportionately concentrated in the Isolated Disengaged and Politically Aware Isolated profiles."),
+    4: ("figures/shap_all_generations.png",
+        "Figure 4. Feature importance (mean |SHAP|) by generation from gradient boosting model. Socialization frequency ranks as the most important predictor for Gen Z; education ranks first for all other generations."),
 }
 
 
@@ -366,13 +368,13 @@ def build_title_page(doc):
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     set_paragraph_spacing(p, line_spacing=2.0)
-    run = p.add_run("In-Person Socialization as the First Step to Volunteering")
+    run = p.add_run("In-Person Socialization, Social Isolation, and Volunteering")
     set_run_font(run, bold=True, size=12)
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     set_paragraph_spacing(p, line_spacing=2.0)
-    run = p.add_run("Across Generational Cohorts")
+    run = p.add_run("Across Five Generational Cohorts")
     set_run_font(run, bold=True, size=12)
 
     # Blank line
