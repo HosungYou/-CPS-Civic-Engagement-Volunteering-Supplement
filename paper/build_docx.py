@@ -182,14 +182,12 @@ TABLE_TITLES = {
     1: "Table 1\nSample Characteristics by Generational Cohort (CPS-CEV 2017–2023, N = 201,168)",
     2: "Table 2\nFirst Step Effect: Average Marginal Effects for the Transition From No Socialization to Minimal Socialization",
     3: "Table 3\nLatent Profile Characteristics: Indicator Means and Volunteering Rates",
-    4: "Table 4\nGenerational Distribution Across Civic Engagement Profiles (%)",
 }
 
 TABLE_FILES = {
     1: "tables/table1_sample_characteristics.csv",
     2: "tables/table2_first_step_ame.csv",
     3: "tables/table5_lpa_profiles.csv",
-    4: "tables/table6_gen_profile_dist.csv",
 }
 
 FIGURE_MAP = {
@@ -199,8 +197,8 @@ FIGURE_MAP = {
         "Figure 2. Civic engagement profile characteristics from latent profile analysis. Cell values represent indicator means on the original scale; darker shading indicates higher relative values within each indicator."),
     3: ("figures/lpa_generation_distribution.png",
         "Figure 3. Generational distribution across six latent civic engagement profiles. Gen Z is disproportionately concentrated in the Isolated Disengaged and Politically Aware Isolated profiles."),
-    4: ("figures/shap_all_generations.png",
-        "Figure 4. Feature importance (mean |SHAP|) by generation from gradient boosting model. Socialization frequency ranks as the most important predictor for Gen Z; education ranks first for all other generations."),
+    4: ("figures/shap_soc_vs_edu_generations.png",
+        "Figure 4. Predictor importance reversal across generations. Mean |SHAP| values for socialization frequency and education from gradient boosting model. Gen Z is the only generation for which socialization outranks education as the strongest predictor of volunteering."),
 }
 
 

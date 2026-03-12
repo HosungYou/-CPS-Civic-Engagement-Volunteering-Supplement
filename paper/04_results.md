@@ -29,9 +29,8 @@ Person-centered analysis tested whether the regression findings hold when indivi
 <!-- TABLE:3 -->
 <!-- FIGURE:2 -->
 
-The generational distribution across profiles was pronounced (Table 4; Figure 3). Over a third of Gen Z (35.3%) fell into the Isolated Disengaged profile—more than double the Boomer rate (15.3%)—while only 3.7% of Gen Z reached Fully Engaged status (vs. 15.1% of Boomers). Combining the two socially isolated profiles (Isolated Disengaged and Politically Aware Isolated), over half of Gen Z (50.6%) occupied profiles defined by social disconnection. These proportions were essentially unchanged between the pre- and post-COVID periods (Isolated Disengaged: 35.5% vs. 35.2%), providing person-centered corroboration of the regression-based temporal stability finding. The concentration of Gen Z in socially disconnected profiles is striking in absolute terms: more than one in three Gen Z respondents fell into the profile defined by minimal engagement on every civic indicator—a rate suggesting that social disconnection is not a marginal phenomenon among young adults but a dominant pattern.
+The generational distribution across profiles was pronounced (Figure 3). Over a third of Gen Z (35.3%) fell into the Isolated Disengaged profile—more than double the Boomer rate (15.3%)—while only 3.7% of Gen Z reached Fully Engaged status (vs. 15.1% of Boomers). Combining the two socially isolated profiles (Isolated Disengaged and Politically Aware Isolated), over half of Gen Z (50.6%) occupied profiles defined by social disconnection. These proportions were essentially unchanged between the pre- and post-COVID periods (Isolated Disengaged: 35.5% vs. 35.2%), providing person-centered corroboration of the regression-based temporal stability finding. The concentration of Gen Z in socially disconnected profiles is striking in absolute terms: more than one in three Gen Z respondents fell into the profile defined by minimal engagement on every civic indicator—a rate suggesting that social disconnection is not a marginal phenomenon among young adults but a dominant pattern.
 
-<!-- TABLE:4 -->
 <!-- FIGURE:3 -->
 
 ## Predictive Validation
