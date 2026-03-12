@@ -197,8 +197,6 @@ FIGURE_MAP = {
         "Figure 2. Civic engagement profile characteristics from latent profile analysis. Cell values represent indicator means on the original scale; darker shading indicates higher relative values within each indicator."),
     3: ("figures/lpa_generation_distribution.png",
         "Figure 3. Generational distribution across six latent civic engagement profiles. Gen Z is disproportionately concentrated in the Isolated Disengaged and Politically Aware Isolated profiles."),
-    4: ("figures/shap_soc_vs_edu_generations.png",
-        "Figure 4. Predictor importance reversal across generations. Mean |SHAP| values for socialization frequency and education from gradient boosting model. Gen Z is the only generation for which socialization outranks education as the strongest predictor of volunteering."),
 }
 
 
