@@ -197,10 +197,6 @@ FIGURE_MAP = {
         "Figure 2. Civic engagement profile characteristics from latent profile analysis. Cell values represent indicator means on the original scale; darker shading indicates higher relative values within each indicator."),
     3: ("figures/lpa_generation_distribution.png",
         "Figure 3. Generational distribution across six latent civic engagement profiles. Gen Z is disproportionately concentrated in the Isolated Disengaged and Politically Aware Isolated profiles."),
-    4: ("figures/shap_beeswarm_genz_vs_older.png",
-        "Figure 4. SHAP value distributions for Generation Z (left) versus older cohorts (right), showing the top 12 predictors ranked by mean absolute SHAP value for Gen Z. Color encodes feature value (blue = low, red = high). Socialization frequency is the most important predictor for Gen Z, whereas education dominates for older cohorts."),
-    5: ("figures/shap_dependence_soc_faceted.png",
-        "Figure 5. SHAP dependence plots for in-person socialization frequency. Left panel: Gen Z, with annotations marking the First Step Effect (steep initial rise) and plateau (flattening beyond moderate socialization). Right panel: Older cohorts, with generation-specific trend lines and 95% confidence bands showing continuous returns from increased socialization."),
 }
 
 
