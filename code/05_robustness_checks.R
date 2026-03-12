@@ -1,247 +1,347 @@
 # ==============================================================================
 # 05_robustness_checks.R
-# Robustness and Sensitivity Analyses
+# ROBUSTNESS ANALYSES for "Bowling Alone, Scrolling Together"
 #
-# Study: Heterogeneous Effects of Organized Volunteering on Civic Engagement
 # Authors: Hosung You & Suzanna Windon
+# Target: NVSQ
+#
+# Tests:
+#   A. APC — Fixed age-band comparison (25-30 across waves; age²)
+#   B. Membership as direct control in main model
+#   C. Continuous socialization (log-linear) vs categorical First Step
+#   D. Alternative generation boundaries (±2 years)
 # ==============================================================================
 
 library(tidyverse)
-library(grf)
-library(dbarts)       # BART
-library(DoubleML)     # Double Machine Learning
-library(mlr3)
-library(mlr3learners)
-library(ggplot2)
+library(survey)
+library(marginaleffects)
 
-set.seed(20240224)
+set.seed(20260309)
 
-# --- 1. Load Data and Results -------------------------------------------------
-data <- readRDS("data/cev_with_profiles.rds")
-cf_results <- readRDS("data/causal_forest_results.rds")
+# --- 0. Load Data & Survey Design --------------------------------------------
+data <- readRDS("data/cev_clean.rds")
+cat(sprintf("Full sample: N = %s\n", format(nrow(data), big.mark = ",")))
 
-cat("Robustness checks initialized.\n")
+options(survey.lonely.psu = "adjust")
+svy <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                  weights = ~VLSUPPWT, nest = TRUE, data = data)
 
 # ==============================================================================
-# CHECK 1: BART Comparison
+# A. APC TEST — Fixed Age-Band Comparison
 # ==============================================================================
+cat("\n", strrep("=", 70), "\n")
+cat("A. APC TEST: Fixed Age-Band Across Waves\n")
+cat(strrep("=", 70), "\n")
 
-run_bart_comparison <- function(X, Y, W, weights, outcome_name) {
-  cat(sprintf("\n--- BART Comparison: %s ---\n", outcome_name))
+# Test A1: Ages 25-30 (Millennials in all waves — no Gen Z contamination)
+cat("\n--- Test A1: Ages 25-30 across waves (all Millennials) ---\n")
+data_2530 <- data %>% filter(AGE >= 25, AGE <= 30)
+cat(sprintf("N (ages 25-30): %s\n", format(nrow(data_2530), big.mark = ",")))
+cat("Wave x Generation:\n")
+print(table(data_2530$wave, data_2530$generation))
 
-  # Fit BART for treated and control separately
-  treated_idx <- W == 1
-  control_idx <- W == 0
+svy_2530 <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                        weights = ~VLSUPPWT, nest = TRUE, data = data_2530)
 
-  bart_treated <- bart(
-    x.train = X[treated_idx, ],
-    y.train = Y[treated_idx],
-    x.test = X,
-    ntree = 200,
-    nskip = 100,
-    ndpost = 1000,
-    verbose = FALSE
+m_2530 <- svyglm(
+  volunteered ~ soc_factor * wave + AGE + female + race_eth + ba_plus +
+    employed + married + faminc_log + metro + region,
+  design = svy_2530,
+  family = quasibinomial()
+)
+
+cat("\nWald test for soc_factor x wave interaction (ages 25-30):\n")
+regTermTest(m_2530, ~ soc_factor:wave)
+
+pred_2530 <- predictions(m_2530,
+  newdata = datagrid(soc_factor = unique, wave = unique),
+  type = "response"
+)
+cat("\nPredicted probabilities (ages 25-30 by wave):\n")
+pred_2530_df <- as.data.frame(pred_2530[, c("soc_factor", "wave", "estimate", "conf.low", "conf.high")])
+print(pred_2530_df)
+
+# Test A2: Ages 18-24 across all waves
+cat("\n--- Test A2: Ages 18-24 across waves ---\n")
+data_1824 <- data %>% filter(AGE >= 18, AGE <= 24)
+cat(sprintf("N (ages 18-24): %s\n", format(nrow(data_1824), big.mark = ",")))
+cat("Wave x Generation:\n")
+print(table(data_1824$wave, data_1824$generation))
+
+svy_1824 <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                        weights = ~VLSUPPWT, nest = TRUE, data = data_1824)
+
+m_1824 <- svyglm(
+  volunteered ~ soc_factor * wave + AGE + female + race_eth + ba_plus +
+    employed + married + faminc_log + metro + region,
+  design = svy_1824,
+  family = quasibinomial()
+)
+
+cat("\nWald test for soc_factor x wave interaction (ages 18-24):\n")
+regTermTest(m_1824, ~ soc_factor:wave)
+
+pred_1824 <- predictions(m_1824,
+  newdata = datagrid(soc_factor = unique, wave = unique),
+  type = "response"
+)
+cat("\nPredicted probabilities (ages 18-24 by wave):\n")
+pred_1824_df <- as.data.frame(pred_1824[, c("soc_factor", "wave", "estimate", "conf.low", "conf.high")])
+print(pred_1824_df)
+
+# Test A3: Full model with age-squared
+cat("\n--- Test A3: Full model with age-squared ---\n")
+data$AGE_sq <- data$AGE^2
+svy_agesq <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                         weights = ~VLSUPPWT, nest = TRUE, data = data)
+
+m_agesq <- svyglm(
+  volunteered ~ soc_factor * generation + AGE + AGE_sq +
+    female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy_agesq,
+  family = quasibinomial()
+)
+
+cat("\nGeneration interaction with age-squared control:\n")
+regTermTest(m_agesq, ~ soc_factor:generation)
+
+ame_agesq <- avg_slopes(m_agesq, variables = "soc_factor", by = "generation")
+cat("\nAME with age-squared control (First Step contrasts):\n")
+ame_first <- ame_agesq %>% filter(contrast == "Few times/yr - Not at all")
+print(as.data.frame(ame_first[, c("generation", "estimate", "conf.low", "conf.high", "p.value")]))
+
+
+# ==============================================================================
+# B. MEMBERSHIP AS DIRECT CONTROL
+# ==============================================================================
+cat("\n", strrep("=", 70), "\n")
+cat("B. MEMBERSHIP CONTROL — Testing Institutional Sorting Confound\n")
+cat(strrep("=", 70), "\n")
+
+data_mem <- data %>% filter(!is.na(membership))
+cat(sprintf("N with valid membership: %s\n", format(nrow(data_mem), big.mark = ",")))
+
+svy_mem <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                      weights = ~VLSUPPWT, nest = TRUE, data = data_mem)
+
+# Model without membership
+m_nomem <- svyglm(
+  volunteered ~ soc_factor * generation +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy_mem,
+  family = quasibinomial()
+)
+
+# Model with membership
+m_withmem <- svyglm(
+  volunteered ~ soc_factor * generation + membership +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy_mem,
+  family = quasibinomial()
+)
+
+cat("\n--- Without membership control ---\n")
+ame_nomem <- avg_slopes(m_nomem, variables = "soc_factor", by = "generation")
+first_nomem <- ame_nomem %>%
+  filter(contrast == "Few times/yr - Not at all") %>%
+  select(generation, estimate, conf.low, conf.high)
+cat("First Step AME:\n")
+print(as.data.frame(first_nomem))
+
+cat("\n--- With membership control ---\n")
+ame_withmem <- avg_slopes(m_withmem, variables = "soc_factor", by = "generation")
+first_withmem <- ame_withmem %>%
+  filter(contrast == "Few times/yr - Not at all") %>%
+  select(generation, estimate, conf.low, conf.high)
+cat("First Step AME:\n")
+print(as.data.frame(first_withmem))
+
+cat("\n--- First Step Effect attenuation with membership control ---\n")
+comparison <- first_nomem %>%
+  rename(est_no_mem = estimate, lo_no = conf.low, hi_no = conf.high) %>%
+  left_join(
+    first_withmem %>%
+      rename(est_w_mem = estimate, lo_w = conf.low, hi_w = conf.high),
+    by = "generation"
+  ) %>%
+  mutate(
+    attenuation_pct = round((1 - est_w_mem / est_no_mem) * 100, 1)
   )
+print(as.data.frame(comparison))
 
-  bart_control <- bart(
-    x.train = X[control_idx, ],
-    y.train = Y[control_idx],
-    x.test = X,
-    ntree = 200,
-    nskip = 100,
-    ndpost = 1000,
-    verbose = FALSE
-  )
 
-  # Individual treatment effects
-  tau_bart <- colMeans(bart_treated$yhat.test) - colMeans(bart_control$yhat.test)
-  ate_bart <- mean(tau_bart)
-  se_bart <- sd(tau_bart) / sqrt(length(tau_bart))
+# ==============================================================================
+# C. CONTINUOUS SOCIALIZATION — First Step Threshold Test
+# ==============================================================================
+cat("\n", strrep("=", 70), "\n")
+cat("C. CONTINUOUS SOCIALIZATION — Threshold vs Concavity\n")
+cat(strrep("=", 70), "\n")
 
-  cat(sprintf("BART ATE = %.4f (SE = %.4f)\n", ate_bart, se_bart))
+# Model 1: Linear continuous
+m_linear <- svyglm(
+  volunteered ~ CESOCIALIZE * generation +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy,
+  family = quasibinomial()
+)
 
-  return(list(tau = tau_bart, ate = ate_bart, se = se_bart))
+# Model 2: Log-transformed continuous
+data$soc_log <- log(data$CESOCIALIZE)
+svy_log <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                      weights = ~VLSUPPWT, nest = TRUE, data = data)
+
+m_log <- svyglm(
+  volunteered ~ soc_log * generation +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy_log,
+  family = quasibinomial()
+)
+
+# Model 3: Quadratic continuous
+data$soc_sq <- data$CESOCIALIZE^2
+svy_sq <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                     weights = ~VLSUPPWT, nest = TRUE, data = data)
+
+m_quad <- svyglm(
+  volunteered ~ (CESOCIALIZE + soc_sq) * generation +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy_sq,
+  family = quasibinomial()
+)
+
+# Predicted probabilities at each level
+cat("\n--- Predicted probabilities: Categorical vs Continuous models ---\n")
+
+# Categorical (reference)
+m_cat <- svyglm(
+  volunteered ~ soc_factor * generation +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy,
+  family = quasibinomial()
+)
+pred_cat <- predictions(m_cat,
+  newdata = datagrid(soc_factor = unique, generation = unique),
+  type = "response"
+)
+
+pred_lin <- predictions(m_linear,
+  newdata = datagrid(CESOCIALIZE = 1:6, generation = unique),
+  type = "response"
+)
+
+pred_grid_log <- datagrid(model = m_log, CESOCIALIZE = 1:6, generation = unique)
+pred_grid_log$soc_log <- log(pred_grid_log$CESOCIALIZE)
+pred_logmod <- predictions(m_log, newdata = pred_grid_log, type = "response")
+
+pred_grid_quad <- datagrid(model = m_quad, CESOCIALIZE = 1:6, generation = unique)
+pred_grid_quad$soc_sq <- pred_grid_quad$CESOCIALIZE^2
+pred_quadmod <- predictions(m_quad, newdata = pred_grid_quad, type = "response")
+
+cat("Categorical model (reference):\n")
+cat_df <- as.data.frame(pred_cat[, c("soc_factor", "generation", "estimate")])
+print(cat_df %>% pivot_wider(names_from = generation, values_from = estimate))
+
+cat("\nLinear continuous:\n")
+lin_df <- as.data.frame(pred_lin[, c("CESOCIALIZE", "generation", "estimate")])
+print(lin_df %>% pivot_wider(names_from = generation, values_from = estimate))
+
+cat("\nLog-transformed:\n")
+log_df <- as.data.frame(pred_logmod[, c("CESOCIALIZE", "generation", "estimate")])
+print(log_df %>% pivot_wider(names_from = generation, values_from = estimate))
+
+cat("\nQuadratic:\n")
+quad_df <- as.data.frame(pred_quadmod[, c("CESOCIALIZE", "generation", "estimate")])
+print(quad_df %>% pivot_wider(names_from = generation, values_from = estimate))
+
+# Key test: Does categorical 0->1 transition exceed smooth prediction?
+cat("\n--- First Step Excess Test ---\n")
+cat("Difference between categorical and log-smooth predicted probabilities:\n")
+cat("(Positive = categorical jump exceeds smooth curve = genuine threshold)\n\n")
+
+for (gen in levels(data$generation)) {
+  cat_vals <- cat_df %>% filter(generation == gen) %>% pull(estimate)
+  log_vals <- log_df %>% filter(generation == gen) %>% pull(estimate)
+  cat_jump <- cat_vals[2] - cat_vals[1]  # categorical 0->1
+  log_jump <- log_vals[2] - log_vals[1]  # smooth 0->1
+  excess <- cat_jump - log_jump
+  cat(sprintf("  %s: Cat jump=%.3f, Log jump=%.3f, Excess=%.3f (%s)\n",
+              gen, cat_jump, log_jump, excess,
+              ifelse(excess > 0.005, "THRESHOLD", "concavity")))
 }
 
-# ==============================================================================
-# CHECK 2: Double Machine Learning (DML)
-# ==============================================================================
-
-run_dml_comparison <- function(data_df, outcome_var, outcome_name) {
-  cat(sprintf("\n--- DML Comparison: %s ---\n", outcome_name))
-
-  # Prepare data for DoubleML
-  dml_data <- data_df %>%
-    select(Y = all_of(outcome_var),
-           D = volunteered_org,
-           age, female, married, has_children,
-           employed, homeowner, is_rural) %>%
-    drop_na()
-
-  # Create DoubleML data object
-  ml_data <- DoubleMLData$new(
-    dml_data,
-    y_col = "Y",
-    d_cols = "D"
-  )
-
-  # Random forest learners
-  ml_g <- lrn("regr.ranger", num.trees = 500)
-  ml_m <- lrn("classif.ranger", num.trees = 500)
-
-  # Partially Linear Regression Model
-  dml_plr <- DoubleMLPLR$new(
-    ml_data,
-    ml_g = ml_g,
-    ml_m = ml_m,
-    n_folds = 5
-  )
-
-  dml_plr$fit()
-
-  cat(sprintf("DML ATE = %.4f (SE = %.4f)\n",
-              dml_plr$coef, dml_plr$se))
-
-  return(list(
-    coef = dml_plr$coef,
-    se = dml_plr$se,
-    ci = dml_plr$confint()
-  ))
-}
 
 # ==============================================================================
-# CHECK 3: Wave-Specific Analysis (Temporal Stability)
+# D. ALTERNATIVE GENERATION BOUNDARIES
 # ==============================================================================
+cat("\n", strrep("=", 70), "\n")
+cat("D. SENSITIVITY TO GENERATION BOUNDARIES (+/-2 years)\n")
+cat(strrep("=", 70), "\n")
 
-run_wave_specific <- function(data, X_formula, outcome_name) {
-  cat(sprintf("\n--- Wave-Specific Analysis: %s ---\n", outcome_name))
-
-  waves <- unique(data$YEAR)
-  wave_results <- list()
-
-  for (w in waves) {
-    cat(sprintf("  Wave %d...\n", w))
-
-    data_w <- data %>% filter(YEAR == w)
-
-    X_w <- model.matrix(X_formula, data = data_w)
-    W_w <- data_w$volunteered_org
-    Y_w <- data_w[[paste0(outcome_name, "_z")]]
-    weights_w <- data_w$VLSUPPWT / mean(data_w$VLSUPPWT)
-
-    valid <- !is.na(Y_w)
-
-    cf_w <- causal_forest(
-      X = X_w[valid, ],
-      Y = Y_w[valid],
-      W = W_w[valid],
-      sample.weights = weights_w[valid],
-      num.trees = 2000,
-      honesty = TRUE,
-      seed = 20240224
+data_alt <- data %>%
+  mutate(
+    gen_alt = factor(
+      case_when(
+        birth_year >= 1995 ~ "Gen Z (1995+)",
+        birth_year >= 1979 ~ "Millennial",
+        birth_year >= 1963 ~ "Gen X",
+        birth_year >= 1944 ~ "Boomer",
+        TRUE ~ "Silent"
+      ),
+      levels = c("Gen Z (1995+)", "Millennial", "Gen X", "Boomer", "Silent")
     )
-
-    ate_w <- average_treatment_effect(cf_w)
-
-    wave_results[[as.character(w)]] <- list(
-      ate = ate_w[1],
-      se = ate_w[2],
-      n = sum(valid)
-    )
-
-    cat(sprintf("  ATE = %.4f (SE = %.4f), N = %d\n",
-                ate_w[1], ate_w[2], sum(valid)))
-  }
-
-  return(wave_results)
-}
-
-# ==============================================================================
-# CHECK 4: Propensity Score Trimming Sensitivity
-# ==============================================================================
-
-run_trimming_sensitivity <- function(cf_result, e_hat, thresholds) {
-  cat("\n--- Trimming Sensitivity Analysis ---\n")
-
-  trim_results <- tibble()
-
-  for (thresh in thresholds) {
-    mask <- e_hat > thresh & e_hat < (1 - thresh)
-    n_retained <- sum(mask)
-    pct_retained <- mean(mask) * 100
-
-    # This is a simplified version - in practice, re-estimate the forest
-    tau_trimmed <- cf_result$tau_hat[mask]
-    ate_trimmed <- mean(tau_trimmed)
-    se_trimmed <- sd(tau_trimmed) / sqrt(length(tau_trimmed))
-
-    trim_results <- bind_rows(trim_results, tibble(
-      threshold = thresh,
-      n = n_retained,
-      pct = pct_retained,
-      ate = ate_trimmed,
-      se = se_trimmed
-    ))
-
-    cat(sprintf("  Threshold = %.2f: ATE = %.4f, N = %d (%.1f%%)\n",
-                thresh, ate_trimmed, n_retained, pct_retained))
-  }
-
-  return(trim_results)
-}
-
-# ==============================================================================
-# CHECK 5: Comparison Summary Table
-# ==============================================================================
-
-create_comparison_table <- function(cf_ate, bart_ate, dml_ate, outcome_name) {
-  comparison <- tibble(
-    Method = c("Causal Forest (GRF)", "BART", "Double ML (PLR)"),
-    ATE = c(cf_ate[1], bart_ate$ate, dml_ate$coef),
-    SE = c(cf_ate[2], bart_ate$se, dml_ate$se),
-    CI_lower = ATE - 1.96 * SE,
-    CI_upper = ATE + 1.96 * SE
   )
 
-  cat(sprintf("\n--- Method Comparison: %s ---\n", outcome_name))
-  print(comparison)
+svy_alt <- svydesign(ids = ~SERIAL, strata = ~STATEFIP,
+                       weights = ~VLSUPPWT, nest = TRUE, data = data_alt)
 
-  # Visualization
-  p <- ggplot(comparison, aes(x = ATE, y = Method)) +
-    geom_point(size = 3, color = "#264653") +
-    geom_errorbarh(aes(xmin = CI_lower, xmax = CI_upper),
-                   height = 0.2, color = "#264653") +
-    geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
-    theme_minimal(base_size = 14) +
-    labs(title = sprintf("Method Comparison: %s", outcome_name),
-         x = "Average Treatment Effect",
-         y = "")
+m_alt <- svyglm(
+  volunteered ~ soc_factor * gen_alt +
+    AGE + female + race_eth + ba_plus + employed +
+    married + faminc_log + metro + region + post_covid,
+  design = svy_alt,
+  family = quasibinomial()
+)
 
-  ggsave(sprintf("figures/robustness_comparison_%s.png", outcome_name),
-         p, width = 10, height = 5, dpi = 300)
+cat("\nInteraction test with shifted boundaries (Gen Z = 1995+):\n")
+regTermTest(m_alt, ~ soc_factor:gen_alt)
 
-  return(comparison)
-}
+ame_alt <- avg_slopes(m_alt, variables = "soc_factor", by = "gen_alt")
+first_alt <- ame_alt %>%
+  filter(contrast == "Few times/yr - Not at all") %>%
+  select(gen_alt, estimate, conf.low, conf.high)
+cat("\nFirst Step AME with shifted boundaries:\n")
+print(as.data.frame(first_alt))
+
 
 # ==============================================================================
-# EXECUTE ALL ROBUSTNESS CHECKS
+# SUMMARY
 # ==============================================================================
+cat("\n", strrep("=", 70), "\n")
+cat("ROBUSTNESS CHECKS SUMMARY\n")
+cat(strrep("=", 70), "\n")
+cat("
+A. APC Test:
+   - Ages 25-30 (all Millennials): socialization-volunteering across waves
+   - Ages 18-24: wave effects in youngest age band
+   - Age-squared: generational effects with nonlinear age control
 
-cat("\n")
-cat("================================================================\n")
-cat("  ROBUSTNESS AND SENSITIVITY ANALYSES\n")
-cat("================================================================\n")
+B. Membership Control:
+   - Tests institutional sorting confound (Beyerlein & Hipp, 2006)
+   - First Step Effect survival with membership controlled
 
-# Note: Actual execution requires the full data pipeline to be run first.
-# The functions above provide the complete framework for all robustness checks.
+C. Continuous Socialization:
+   - Categorical vs linear, log, and quadratic specifications
+   - First Step Excess Test: genuine threshold vs concavity
 
-cat("\nRobustness check framework ready.\n")
-cat("Run after completing Phase 1 (LPA) and Phase 2 (Causal Forest).\n")
+D. Generation Boundaries:
+   - Gen Z boundary shifted to 1995 (from 1997)
+")
 
-# Example execution flow:
-# bart_results <- run_bart_comparison(X_trim, Y_trim, W_trim, weights_trim, "political")
-# dml_results <- run_dml_comparison(data, "political_participation_z", "political")
-# wave_results <- run_wave_specific(data, formula, "political_participation")
-# trim_results <- run_trimming_sensitivity(cf_results[["political"]], e_hat,
-#                                           c(0.01, 0.05, 0.10, 0.15, 0.20))
-# comparison <- create_comparison_table(cf_ate, bart_results, dml_results, "political")
+cat("\nRobustness checks complete.\n")

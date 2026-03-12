@@ -6,8 +6,11 @@
 # Authors: Hosung You & Suzanna Windon
 # Target: NVSQ
 #
+# Design: 4-wave pooled (2017/2019/2021/2023), N ≈ 201,000
+#
 # Purpose: Validate logistic regression findings with nonlinear ML model.
 #          Confirm socialization as top predictor; capture threshold effects.
+#          Compare feature importance across ALL generations.
 # ==============================================================================
 
 import numpy as np
@@ -52,10 +55,13 @@ GENERATION_ORDER = ['Gen Z', 'Millennial', 'Gen X', 'Boomer', 'Silent']
 
 
 def load_data():
-    """Load cleaned CPS-CEV data exported from R."""
-    # Expected: CSV exported from 00_data_preparation.R
+    """Load cleaned CPS-CEV 4-wave data exported from R."""
     df = pd.read_csv("data/cev_for_shap.csv")
-    print(f"Loaded N = {len(df):,}")
+    print(f"Loaded N = {len(df):,} (4-wave pooled)")
+    print(f"\nWave distribution:")
+    print(df['wave'].value_counts().sort_index())
+    print(f"\nGeneration distribution:")
+    print(df['generation'].value_counts().reindex(GENERATION_ORDER))
     return df
 
 
@@ -64,12 +70,12 @@ def prepare_features(df):
     target = 'volunteered'
 
     features = [
-        'CESOCIALIZE', 'PEEDUCA', 'AGE', 'HEFAMINC',
+        'CESOCIALIZE', 'EDUC', 'AGE', 'faminc_log',
         'VLSOCMEDIA_rev',   # reverse-coded: higher = more use
         'female', 'married', 'employed', 'metro',
         'region_Northeast', 'region_Midwest', 'region_South',
-        'wave_2019', 'wave_2021', 'wave_2023',
-        'gen_Millennial', 'gen_GenX', 'gen_Boomer', 'gen_Silent'
+        'gen_Millennial', 'gen_GenX', 'gen_Boomer', 'gen_Silent',
+        'post_covid'
     ]
 
     # Filter to available columns
@@ -82,6 +88,29 @@ def prepare_features(df):
     y = df[target].values
     weights = df['VLSUPPWT'].values if 'VLSUPPWT' in df.columns else None
 
+    # Human-readable labels for publication figures
+    LABEL_MAP = {
+        'CESOCIALIZE': 'Socialization Freq.',
+        'EDUC': 'Education',
+        'AGE': 'Age',
+        'faminc_log': 'Family Income (log)',
+        'VLSOCMEDIA_rev': 'Civic Social Media',
+        'female': 'Female',
+        'married': 'Married',
+        'employed': 'Employed',
+        'metro': 'Metropolitan',
+        'region_Northeast': 'Northeast',
+        'region_Midwest': 'Midwest',
+        'region_South': 'South',
+        'gen_Millennial': 'Millennial',
+        'gen_GenX': 'Gen X',
+        'gen_Boomer': 'Boomer',
+        'gen_Silent': 'Silent',
+        'post_covid': 'Post-COVID',
+    }
+    X.rename(columns=LABEL_MAP, inplace=True)
+    available = [LABEL_MAP.get(f, f) for f in available]
+
     return X, y, weights, available
 
 
@@ -92,8 +121,10 @@ def train_gbm(X, y, weights=None):
     )
 
     if weights is not None:
-        w_train = weights[:len(X_train)]
-        w_test = weights[len(X_train):]
+        idx_train = X_train.index
+        idx_test = X_test.index
+        w_train = weights[idx_train]
+        w_test = weights[idx_test]
     else:
         w_train, w_test = None, None
 
@@ -131,14 +162,16 @@ def shap_analysis_full(model, X):
     # Summary beeswarm
     plt.figure(figsize=(12, 8))
     shap.summary_plot(shap_values, X, show=False, max_display=15)
-    plt.title("SHAP Summary: Predictors of Volunteering", fontweight='bold')
+    plt.title("SHAP Summary: Predictors of Volunteering (2017–2023)",
+              fontweight='bold')
     plt.tight_layout()
     plt.savefig(FIGURES_DIR / "shap_summary_full.png")
     plt.close()
 
     # Bar importance
     plt.figure(figsize=(10, 8))
-    shap.summary_plot(shap_values, X, plot_type="bar", show=False, max_display=15)
+    shap.summary_plot(shap_values, X, plot_type="bar", show=False,
+                      max_display=15)
     plt.title("Feature Importance (Mean |SHAP|)", fontweight='bold')
     plt.tight_layout()
     plt.savefig(FIGURES_DIR / "shap_bar_full.png")
@@ -148,15 +181,17 @@ def shap_analysis_full(model, X):
 
 
 def shap_dependence_socialization(shap_values, X):
-    """SHAP dependence plot for CESOCIALIZE (key finding)."""
-    if 'CESOCIALIZE' not in X.columns:
-        print("CESOCIALIZE not in features, skipping dependence plot.")
+    """SHAP dependence plot for socialization frequency (key finding)."""
+    soc_col = 'Socialization Freq.'
+    age_col = 'Age'
+    if soc_col not in X.columns:
+        print(f"{soc_col} not in features, skipping dependence plot.")
         return
 
     fig, ax = plt.subplots(figsize=(10, 7))
     shap.dependence_plot(
-        'CESOCIALIZE', shap_values, X,
-        interaction_index='AGE',
+        soc_col, shap_values, X,
+        interaction_index=age_col,
         ax=ax, show=False
     )
     ax.set_xlabel("Socialization Frequency\n(1=Not at all → 6=Daily)")
@@ -167,33 +202,19 @@ def shap_dependence_socialization(shap_values, X):
 
 
 def shap_by_generation(model, df, X, feature_names):
-    """Run separate SHAP analysis by generation for comparison."""
-    gen_col = None
-    for col in ['generation', 'gen_label']:
-        if col in df.columns:
-            gen_col = col
-            break
-
-    if gen_col is None:
-        print("No generation column found. Creating from dummies.")
-        # Reconstruct from dummy variables
-        df = df.copy()
-        df['gen_label'] = 'Gen Z'  # reference
-        for gen in ['Millennial', 'GenX', 'Boomer', 'Silent']:
-            col_name = f'gen_{gen}'
-            if col_name in df.columns:
-                df.loc[df[col_name] == 1, 'gen_label'] = gen.replace('GenX', 'Gen X')
-        gen_col = 'gen_label'
+    """Run SHAP analysis by ALL generations for comparison."""
+    gen_col = 'generation'
 
     results = {}
     explainer = shap.TreeExplainer(model)
 
-    for gen in ['Gen Z', 'Boomer']:
+    for gen in GENERATION_ORDER:
         mask = df[gen_col] == gen
         if mask.sum() < 100:
+            print(f"Skipping {gen}: N={mask.sum()} < 100")
             continue
 
-        X_gen = X[mask]
+        X_gen = X.loc[mask]
         sv = explainer.shap_values(X_gen)
 
         # Feature importance for this generation
@@ -206,9 +227,13 @@ def shap_by_generation(model, df, X, feature_names):
         print(f"\n=== {gen} Feature Importance (Top 10) ===")
         print(importance.head(10))
 
-    # Comparison plot
-    if len(results) == 2:
-        fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+    # Multi-generation comparison plot
+    if len(results) >= 2:
+        n_gens = len(results)
+        fig, axes = plt.subplots(1, n_gens, figsize=(5 * n_gens, 8))
+        if n_gens == 1:
+            axes = [axes]
+
         for ax, (gen, imp) in zip(axes, results.items()):
             top10 = imp.head(10)
             color = GEN_COLORS.get(gen, '#333333')
@@ -219,7 +244,26 @@ def shap_by_generation(model, df, X, feature_names):
             ax.set_title(f"{gen}", fontweight='bold', fontsize=14)
             ax.set_xlabel("Mean |SHAP Value|")
 
-        plt.suptitle("Feature Importance Comparison: Gen Z vs. Boomers",
+        plt.suptitle("Feature Importance by Generation (2017–2023)",
+                     fontweight='bold', fontsize=16)
+        plt.tight_layout()
+        plt.savefig(FIGURES_DIR / "shap_all_generations.png")
+        plt.close()
+
+    # Focused comparison: Gen Z vs Boomer
+    if 'Gen Z' in results and 'Boomer' in results:
+        fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+        for ax, gen in zip(axes, ['Gen Z', 'Boomer']):
+            top10 = results[gen].head(10)
+            color = GEN_COLORS[gen]
+            ax.barh(range(len(top10)), top10.values, color=color, alpha=0.8)
+            ax.set_yticks(range(len(top10)))
+            ax.set_yticklabels(top10.index)
+            ax.invert_yaxis()
+            ax.set_title(f"{gen}", fontweight='bold', fontsize=14)
+            ax.set_xlabel("Mean |SHAP Value|")
+
+        plt.suptitle("Feature Importance: Gen Z vs. Boomers",
                      fontweight='bold', fontsize=16)
         plt.tight_layout()
         plt.savefig(FIGURES_DIR / "shap_genz_vs_boomer.png")
@@ -236,6 +280,7 @@ def main():
     print("=" * 60)
     print("GBM + SHAP Supplementary Analysis")
     print("Bowling Alone, Scrolling Together")
+    print("4-Wave Pooled: 2017/2019/2021/2023")
     print("=" * 60)
 
     # Load data
@@ -243,7 +288,7 @@ def main():
 
     # Prepare features
     X, y, weights, feature_names = prepare_features(df)
-    print(f"Features: {len(feature_names)}")
+    print(f"\nFeatures: {len(feature_names)}")
     print(f"Volunteering rate: {y.mean():.1%}")
 
     # Train model
@@ -258,8 +303,8 @@ def main():
     print("\nGenerating socialization dependence plot...")
     shap_dependence_socialization(shap_values, X)
 
-    # Generation comparison
-    print("\nComparing SHAP by generation...")
+    # All-generation comparison
+    print("\nComparing SHAP across all generations...")
     gen_results = shap_by_generation(model, df, X, feature_names)
 
     print(f"\n{'=' * 60}")
