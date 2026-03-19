@@ -1,0 +1,59 @@
+Variable,OR,95% CI,p
+Main Effects,,,
+Socialization: Few times/yr (ref: Not at all),1.684,"[1.401, 2.025]",< .001
+Socialization: Once/mo,2.449,"[2.000, 2.998]",< .001
+Socialization: Few times/mo,2.499,"[2.091, 2.986]",< .001
+Socialization: Few times/wk,2.488,"[2.081, 2.976]",< .001
+Socialization: Daily,2.744,"[2.176, 3.460]",< .001
+Generation: Millennial (ref: Gen Z),0.738,"[0.659, 0.826]",< .001
+Generation: Gen X,0.750,"[0.656, 0.857]",< .001
+Generation: Boomer,0.533,"[0.453, 0.627]",< .001
+Generation: Silent,0.421,"[0.338, 0.525]",< .001
+Age,1.000,"[0.998, 1.003]",0.786
+Female,1.468,"[1.434, 1.502]",< .001
+Race: Black NH (ref: Asian NH),1.861,"[1.709, 2.027]",< .001
+Race: Hispanic,1.189,"[1.096, 1.291]",< .001
+Race: Other,2.084,"[1.862, 2.332]",< .001
+Race: White NH,2.110,"[1.967, 2.264]",< .001
+Education: BA+,2.273,"[2.208, 2.340]",< .001
+Employed,1.172,"[1.133, 1.212]",< .001
+Married,1.331,"[1.292, 1.371]",< .001
+Family income (log),1.240,"[1.215, 1.266]",< .001
+Metropolitan,0.929,"[0.894, 0.964]",< .001
+Region: Northeast (ref: Midwest),0.778,"[0.743, 0.815]",< .001
+Region: South,0.819,"[0.789, 0.851]",< .001
+Region: West,0.902,"[0.866, 0.940]",< .001
+Post-COVID period,0.759,"[0.736, 0.782]",< .001
+,,,
+Socialization x Generation Interactions,,,
+  Few times/yr x Millennial,0.947,"[0.774, 1.159]",0.600
+  Once/mo x Millennial,0.810,"[0.650, 1.010]",0.061
+  Few times/mo x Millennial,0.861,"[0.710, 1.045]",0.130
+  Few times/wk x Millennial,1.049,"[0.864, 1.274]",0.628
+  Daily x Millennial,1.101,"[0.854, 1.420]",0.456
+  Few times/yr x Gen X,1.052,"[0.857, 1.291]",0.630
+  Once/mo x Gen X,0.917,"[0.734, 1.145]",0.445
+  Few times/mo x Gen X,1.009,"[0.831, 1.224]",0.929
+  Few times/wk x Gen X,1.335,"[1.100, 1.620]",0.003
+  Daily x Gen X,1.197,"[0.932, 1.539]",0.160
+  Few times/yr x Boomer,1.075,"[0.875, 1.319]",0.491
+  Once/mo x Boomer,1.032,"[0.827, 1.288]",0.780
+  Few times/mo x Boomer,1.167,"[0.961, 1.416]",0.119
+  Few times/wk x Boomer,1.509,"[1.243, 1.831]",< .001
+  Daily x Boomer,1.603,"[1.251, 2.055]",< .001
+  Few times/yr x Silent,1.106,"[0.860, 1.424]",0.433
+  Once/mo x Silent,1.011,"[0.773, 1.321]",0.937
+  Few times/mo x Silent,1.158,"[0.921, 1.456]",0.209
+  Few times/wk x Silent,1.666,"[1.332, 2.084]",< .001
+  Daily x Silent,1.594,"[1.213, 2.095]",< .001
+,,,
+Interaction Wald Tests,F,df,p
+Model 1: Soc x Generation,5.00,"(20, 116788)",< .001
+Model 2: Soc x Gen x Education,1.90,"(20, 116759)",0.009
+Model 3: Soc x Gen x Employment,1.55,"(20, 116759)",0.056
+Model 4: Soc x Gen x Civic SM,0.50,"(20, 116758)",0.969
+Model 5: Soc x Gen x Post-COVID,1.03,"(20, 116759)",0.420
+,,,
+Model Fit,,,
+McFadden pseudo R² = 0.1144,,,
+"N = 201,168",,,

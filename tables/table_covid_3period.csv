@@ -1,0 +1,16 @@
+generation,covid_period,estimate,conf.low,conf.high,p.value
+Gen Z,Pre-COVID,0.1071,0.0574,0.1569,0
+Gen Z,During-COVID,0.0684,0.0136,0.1232,0.0145
+Gen Z,Post-COVID,0.0714,0.0183,0.1245,0.0084
+Millennial,Pre-COVID,0.0863,0.066,0.1066,0
+Millennial,During-COVID,0.0517,0.0233,0.08,4e-4
+Millennial,Post-COVID,0.0936,0.0606,0.1265,0
+Gen X,Pre-COVID,0.1045,0.0823,0.1267,0
+Gen X,During-COVID,0.1021,0.069,0.1352,0
+Gen X,Post-COVID,0.0967,0.0613,0.132,0
+Boomer,Pre-COVID,0.0982,0.0797,0.1168,0
+Boomer,During-COVID,0.0689,0.0422,0.0955,0
+Boomer,Post-COVID,0.0827,0.0549,0.1105,0
+Silent,Pre-COVID,0.0769,0.0486,0.1052,0
+Silent,During-COVID,0.0658,0.0239,0.1076,0.0021
+Silent,Post-COVID,0.0694,0.0227,0.1161,0.0036

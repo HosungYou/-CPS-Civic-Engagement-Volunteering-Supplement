@@ -8,29 +8,28 @@
 
 ### Research Questions
 
-**RQ1**: How does the relationship between in-person socialization frequency and volunteering differ across generational cohorts, and does this relationship exhibit nonlinear threshold effects?
+**RQ1** (Variable-Centered): How does the association between in-person socialization frequency and volunteering differ across generational cohorts, and do education, employment, civic social media use, and the COVID-19 pandemic moderate this association differently by generation?
 
-**RQ2**: To what extent do education, employment, and civic social media use moderate the association between social isolation and volunteering, and does this moderation differ by generation?
+**RQ2** (Person-Centered): What distinct civic engagement profiles emerge from latent profile analysis, and how are generational cohorts distributed across these profiles?
 
-### Key Findings (Exploratory)
+### Key Findings
 
-- Nearly half of Gen Z adults (47%) report rarely or never socializing in person — predating COVID-19
-- The "first step" from no socialization to minimal contact corresponds to the largest gain in volunteering (10–14 pp) across all generations
-- Education and employment do not resolve Gen Z's socialization deficit
-- Civic social media compensates for older adults' isolation (+11 pp for Boomers) but not Gen Z's (+5.5 pp)
+- **First Step Effect**: Across all five generations, the transition from no socialization to minimal contact is associated with the largest marginal gain in volunteering probability (7-10 pp) — comparable in magnitude to the education gradient (BA+ vs. no BA)
+- **Gen Z Plateau**: Beyond moderate socialization, Gen Z's volunteering probability plateaus — a pattern absent in all older cohorts — yet Gen Z's baseline volunteering probability at zero socialization (27.3%) exceeds every older generation
+- **Temporal Stability**: These patterns are present before COVID-19 and unchanged afterward, establishing them as cohort characteristics rather than pandemic artifacts
+- **Social Disconnection**: Over half of Gen Z (50.6%) occupies civic engagement profiles defined by social isolation, while only 3.7% reaches Fully Engaged status
 
-### Analysis Framework
+### Analytic Strategy
 
 ```
-Stage 1: Descriptive Cross-tabulations (complete)
+Stage 1: Survey-Weighted Logistic Regression (RQ1)
+   Socialization x Generation interactions
+   Three-way interactions (x Education, x Employment, x Civic SM, x COVID)
+   Average Marginal Effects (First Step Effect)
    ↓
-Stage 2: Survey-Weighted Logistic Regression (PRIMARY)
-   Socialization × Generation interactions
-   Three-way interactions (× Education, × Social Media)
-   ↓
-Stage 3: Supplementary Analyses
-   A. Latent Profile Analysis (4–6 civic engagement profiles)
-   B. Gradient Boosting Machines + SHAP (nonlinear validation)
+Stage 2: Latent Profile Analysis (RQ2)
+   6-profile solution (EII parameterization)
+   Generational distribution, volunteering rates, pre/post-COVID stability
 ```
 
 ### Repository Structure
@@ -39,28 +38,47 @@ Stage 3: Supplementary Analyses
 .
 ├── README.md
 ├── code/
-│   ├── 00_data_preparation.R           # Data acquisition and cleaning
-│   ├── 01_descriptive_analysis.R       # Exploratory cross-tabulations
-│   ├── 02_logistic_regression.R        # Primary analysis (RQ1 & RQ2)
-│   ├── 03_latent_profile_analysis.R    # Supplementary: LPA
-│   ├── 04_gbm_shap_analysis.py        # Supplementary: GBM + SHAP
-│   └── 05_robustness_checks.R         # Sensitivity analyses
-├── paper/                              # Manuscript sections
+│   ├── 00_data_preparation.R              # Data acquisition and cleaning
+│   ├── 01_descriptive_analysis.R          # Exploratory cross-tabulations
+│   ├── 02_logistic_regression.R           # Primary analysis (RQ1)
+│   ├── 03_latent_profile_analysis.R       # Person-centered analysis (RQ2)
+│   ├── 05_robustness_checks.R             # Sensitivity analyses
+│   ├── 11_conceptual_framework.py         # Conceptual framework figure
+│   ├── 12_improved_figures.R              # Improved publication figures
+│   ├── 13_publication_figures.R           # Final publication-quality figures
+│   ├── 14_apa_tables.R                    # APA-formatted table generation
+│   └── 15_additional_tables.R             # Supplementary tables
+├── paper/                                 # Manuscript sections (Markdown → DOCX)
+│   ├── 00_abstract.md
 │   ├── 01_introduction.md
 │   ├── 02_theoretical_framework.md
+│   ├── 02a_purpose_rq.md
 │   ├── 03_method.md
 │   ├── 04_results.md
-│   └── 05_discussion.md
-├── discussion/                         # Collaboration documents (date-themed)
-│   ├── 01_0224_Initial-Collaboration-Proposal_Email-Draft.md
-│   ├── 02–09: Meeting docs, coding decisions, proposals
-│   └── 10_0309_Research-Overview_Analysis-Framework-and-Predicted-Results.md
-├── figures/                            # Output figures
-├── data/                               # Data files (CSV not tracked per IPUMS terms)
-│   ├── cps_00001.pdf                   # IPUMS codebook
-│   └── cps_00002.csv                   # IPUMS CPS extract (N=450K, 46 vars)
-├── references/                         # Reference PDFs
-└── archive/v1_rural_urban_design/      # Original PA-focused design (preserved)
+│   ├── 05_discussion.md
+│   ├── build_docx.py                      # Markdown → APA 7th DOCX converter
+│   └── Bowling_Alone_CLEAN.docx           # Compiled manuscript
+├── figures/
+│   ├── conceptual_framework.png           # Fig 1: Conceptual framework
+│   ├── fig1_pred_prob.png                 # Fig 2: Predicted probabilities
+│   ├── fig4_ame_first_step.png            # Fig 3: First Step Effect AMEs
+│   ├── fig2_lpa_heatmap.png               # Fig 4: LPA profile heatmap
+│   └── fig3_lpa_gen_dist.png              # Fig 5: Generational distribution
+├── tables/
+│   ├── table1_sample_characteristics.csv  # Table 1: Sample characteristics
+│   ├── table2_regression.csv              # Table 2: Logistic regression
+│   ├── table3_first_step_ame.csv          # Table 3: First Step AMEs
+│   ├── table4_lpa_fit.csv                 # Table 4: LPA model fit
+│   ├── table5_lpa_profiles.csv            # Table 5: LPA profiles
+│   ├── table_gen_wave.csv                 # Table 6: Generation x wave rates
+│   └── table_covid_3period.csv            # Supplementary: COVID periods
+├── data/
+│   ├── cps_00001.pdf                      # IPUMS codebook
+│   └── cps_00002.csv.gz                   # IPUMS CPS extract (compressed)
+├── references/                            # Reference PDFs
+├── scripts/                               # Manuscript revision helper scripts
+├── discussion/                            # Collaboration documents
+└── archive/v1_rural_urban_design/         # Original PA-focused design (preserved)
 ```
 
 ### Data
@@ -75,18 +93,18 @@ Stage 3: Supplementary Analyses
 
 ### Software
 
-- **R 4.4+**: `survey`, `tidyLPA`, `tidyverse`, `ipumsr`, `marginaleffects`
-- **Python 3.11+**: `xgboost`, `shap`, `matplotlib`, `seaborn`
+- **R 4.4+**: `survey`, `mclust`, `marginaleffects`, `tidyverse`, `ipumsr`
+- **Python 3.11+**: `python-docx` (manuscript build)
 
 ### Project History
 
 | Date | Milestone |
 |------|-----------|
 | 2026-02-24 | Initial collaboration proposal to Dr. Windon |
-| 2026-03-03 | Meeting document, operational definitions, coding error discovery |
 | 2026-03-03 | Pivot from PA-focused to national scope based on exploratory findings |
 | 2026-03-04 | "Bowling Alone, Scrolling Together" proposal with APA 7th citations |
 | 2026-03-09 | Research framework finalized: 2 RQs, 3-stage analysis, NVSQ target |
+| 2026-03-19 | Major revision: streamlined to 2-method design (regression + LPA), removed ML/SHAP, added conceptual framework, expanded tables (6), publication figures (5), APA 7th DOCX build |
 
 ### License
 

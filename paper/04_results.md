@@ -4,15 +4,21 @@ The analytic sample comprised 201,168 respondents pooled across four CPS-CEV wav
 
 <!-- TABLE:1 -->
 
+<!-- TABLE:6 -->
+
 ## The First Step Effect
 
-Survey-weighted logistic regression confirmed that the socialization–volunteering relationship varies across generations (socialization × generation interaction: Wald F = 5.00, df = 20, *p* < .001). Figure 1 displays the predicted probabilities. Two patterns stand out.
-
-<!-- FIGURE:1 -->
-
-The first is a universal threshold. For every generation, the transition from no socialization to minimal socialization (a few times per year) produced the single largest marginal gain in volunteering probability (Table 2). This "First Step" effect ranged from 7.3 percentage points for the Silent Generation to 10.3 points for Gen X, with Gen Z at 8.1 points (95% CI [5.0, 11.2])—comparable in magnitude to the education gradient (BA+ vs. no BA). Subsequent transitions yielded progressively smaller gains, following a concave dose–response pattern: the move from isolation to minimal contact is worth roughly as much, in terms of volunteering probability, as the next three transitions combined. Across all cohorts, breaking out of complete social isolation was associated with the largest marginal civic return. Robustness analyses confirmed that this threshold is genuine: the observed categorical AMEs exceeded smooth log-linear predictions by 2.4 to 4.7 percentage points across all generations, with the excess largest for Gen Z (4.7 pp). When organizational membership was added as a covariate, the First Step Effect was attenuated by approximately 30%, indicating that part of the socialization pathway operates through institutional embeddedness—but a substantial independent association remained.
+Survey-weighted logistic regression confirmed that the socialization–volunteering relationship varies across generations (socialization × generation interaction: Wald F = 5.00, df = 20, *p* < .001; Table 2). Figure 2 displays the predicted probabilities. Two patterns stand out.
 
 <!-- TABLE:2 -->
+
+<!-- FIGURE:2 -->
+
+<!-- FIGURE:3 -->
+
+The first is a universal threshold. For every generation, the transition from no socialization to minimal socialization (a few times per year) was associated with the single largest marginal gain in volunteering probability (Table 3). This "First Step" effect ranged from 7.3 percentage points for the Silent Generation to 10.3 points for Gen X, with Gen Z at 8.1 points (95% CI [5.0, 11.2])—comparable in magnitude to the education gradient (BA+ vs. no BA). Subsequent transitions yielded progressively smaller gains, following a concave dose–response pattern: the move from isolation to minimal contact is worth roughly as much, in terms of volunteering probability, as the next three transitions combined. Across all cohorts, breaking out of complete social isolation was associated with the largest marginal civic return. Robustness analyses confirmed that this threshold is genuine: the observed categorical AMEs exceeded smooth log-linear predictions by 2.4 to 4.7 percentage points across all generations, with the excess largest for Gen Z (4.7 pp). When organizational membership was added as a covariate, the First Step Effect was attenuated by approximately 30%, indicating that part of the socialization pathway operates through institutional embeddedness—but a substantial independent association remained.
+
+<!-- TABLE:3 -->
 
 The second pattern is unique to Gen Z: a plateau. Gen Z's predicted volunteering probability rose sharply from 27.3% at no socialization to 48.4% at a few times per month, then flatlined—reaching only 50.8% at daily socialization. No other generation exhibited this ceiling. Boomers climbed continuously from 16.7% to 46.8%; Gen X showed the steepest overall gradient (22.0% to 48.1%). A striking baseline comparison deserves note: Gen Z's predicted volunteering probability at zero socialization (27.3%) exceeded that of every other generation, including Boomers (16.7%), suggesting that low volunteering rates among Gen Z do not reflect weaker civic motivation. The plateau instead suggests that for Gen Z, additional face-to-face contact beyond a moderate threshold is not associated with additional civic recruitment, possibly because the social contexts in which high-frequency Gen Z socialization occurs are decoupled from the community-based institutions that historically channel contact into voluntarism.
 
@@ -24,16 +30,14 @@ The temporal stability test was among the most consequential. The socialization 
 
 ## Civic Engagement Profiles
 
-Person-centered analysis tested whether the regression findings hold when individuals are classified by their full pattern of civic behavior rather than by individual predictors. LPA identified six distinct profiles (Table 3; Figure 2). Three anchor the interpretive framework: the *Isolated Disengaged* (19.0% of sample; volunteering rate 9.0%), characterized by minimal scores on every indicator; the *Mainstream Donors* (33.1%; volunteering rate 41.4%), representing institutionally embedded civic engagement; and the *Fully Engaged* (12.0%; volunteering rate 66.7%), scoring highest on virtually every dimension. The *Socially Active Non-Donors* (17.5%; volunteering rate 14.6%) are theoretically important: their members reported the highest socialization of any class (M = 4.70) yet volunteered at rates below the sample mean, demonstrating that socialization without institutional anchoring does not translate into voluntarism. Two remaining profiles round out the typology: the *Politically Aware Isolated* (7.1%; volunteering rate 11.7%), who engaged in frequent political conversation but reported minimal social contact, and the *Activist Boycotters* (11.3%; volunteering rate 46.9%), defined by universal boycotting behavior alongside moderate organizational membership.
+Person-centered analysis tested whether the regression findings hold when individuals are classified by their full pattern of civic behavior rather than by individual predictors. LPA identified six distinct profiles (Tables 4–5; Figure 4). Three anchor the interpretive framework: the *Isolated Disengaged* (19.0% of sample; volunteering rate 9.0%), characterized by minimal scores on every indicator; the *Mainstream Donors* (33.1%; volunteering rate 41.4%), representing institutionally embedded civic engagement; and the *Fully Engaged* (12.0%; volunteering rate 66.7%), scoring highest on virtually every dimension. The *Socially Active Non-Donors* (17.5%; volunteering rate 14.6%) are theoretically important: their members reported the highest socialization of any class (M = 4.70) yet volunteered at rates below the sample mean, demonstrating that socialization without institutional anchoring does not translate into voluntarism. Two remaining profiles round out the typology: the *Politically Aware Isolated* (7.1%; volunteering rate 11.7%), who engaged in frequent political conversation but reported minimal social contact, and the *Activist Boycotters* (11.3%; volunteering rate 46.9%), defined by universal boycotting behavior alongside moderate organizational membership.
 
-<!-- TABLE:3 -->
-<!-- FIGURE:2 -->
+<!-- TABLE:4 -->
+<!-- TABLE:5 -->
+<!-- FIGURE:4 -->
 
 The generational distribution across profiles was pronounced (Figure 3). Over a third of Gen Z (35.3%) fell into the Isolated Disengaged profile—more than double the Boomer rate (15.3%)—while only 3.7% of Gen Z reached Fully Engaged status (vs. 15.1% of Boomers). Combining the two socially isolated profiles (Isolated Disengaged and Politically Aware Isolated), over half of Gen Z (50.6%) occupied profiles defined by social disconnection. These proportions were essentially unchanged between the pre- and post-COVID periods (Isolated Disengaged: 35.5% vs. 35.2%), providing person-centered corroboration of the regression-based temporal stability finding. The concentration of Gen Z in socially disconnected profiles is striking in absolute terms: more than one in three Gen Z respondents fell into the profile defined by minimal engagement on every civic indicator—a rate suggesting that social disconnection is not a marginal phenomenon among young adults but a dominant pattern.
 
-<!-- FIGURE:3 -->
+<!-- FIGURE:5 -->
 
-## Predictive Validation
-
-The regression and profile analyses both rely on researcher-specified variable roles. A final analysis asked whether an algorithm with no imposed structure reaches the same conclusion. An XGBoost classifier trained on the full covariate set achieved test-set AUC = .731, comparable to prior survey-based models of volunteering. TreeSHAP decomposition revealed a generation-specific reversal in feature importance: socialization frequency was the single most important predictor of volunteering for Gen Z (mean |SHAP| = 0.467, indicating that socialization shifted the predicted probability by an average of 0.47 on the log-odds scale), whereas education ranked first for every other generation (mean |SHAP| = 0.426–0.472). SHAP dependence plots independently recovered both the First Step Effect—the steepest gradient at the lowest socialization transition—and the Gen Z plateau, confirming that these patterns are not artifacts of the parametric regression specification. The convergence across methods is itself a finding: a flexible machine learning algorithm, given no information about which variables should interact or where thresholds should fall, independently identified the same two patterns discovered through theory-guided regression—the First Step Effect and the Gen Z plateau—strengthening confidence that these patterns reflect genuine features of the data rather than modeling choices.
 

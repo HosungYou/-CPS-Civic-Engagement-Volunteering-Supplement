@@ -180,50 +180,114 @@ def insert_page_break(doc):
 
 TABLE_TITLES = {
     1: "Table 1\nSample Characteristics by Generational Cohort (CPS-CEV 2017–2023, N = 201,168)",
-    2: "Table 2\nFirst Step Effect: Average Marginal Effects for the Transition From No Socialization to Minimal Socialization",
-    3: "Table 3\nLatent Profile Characteristics: Indicator Means and Volunteering Rates",
+    2: "Table 2\nSurvey-Weighted Logistic Regression Predicting Volunteering (Model 1: Socialization × Generation Interaction)",
+    3: "Table 3\nFirst Step Effect: Average Marginal Effects for the Transition From No Socialization to Minimal Socialization, by Generation",
+    4: "Table 4\nLatent Profile Analysis Model Fit Indices (EII Parameterization, 20,000 Subsample)",
+    5: "Table 5\nLatent Profile Characteristics: Indicator Means and Volunteering Rates (6-Profile Solution, N = 197,497)",
+    6: "Table 6\nVolunteering and Minimal Socialization Rates by Generation and Survey Wave (Survey-Weighted Estimates)",
 }
 
 TABLE_FILES = {
     1: "tables/table1_sample_characteristics.csv",
-    2: "tables/table2_first_step_ame.csv",
-    3: "tables/table5_lpa_profiles.csv",
+    2: "tables/table2_regression.csv",
+    3: "tables/table3_first_step_ame.csv",
+    4: "tables/table4_lpa_fit.csv",
+    5: "tables/table5_lpa_profiles.csv",
+    6: "tables/table_gen_wave.csv",
 }
 
 FIGURE_MAP = {
-    1: ("figures/pred_prob_soc_gen.png",
-        "Figure 1. Predicted probability of volunteering by in-person socialization frequency and generation, from survey-weighted logistic regression (Model 1). Shaded bands represent 95% confidence intervals. The steep initial rise illustrates the First Step Effect; Gen Z's flattening beyond moderate socialization illustrates the generational plateau."),
-    2: ("figures/lpa_profile_heatmap.png",
-        "Figure 2. Civic engagement profile characteristics from latent profile analysis. Cell values represent indicator means on the original scale; darker shading indicates higher relative values within each indicator."),
-    3: ("figures/lpa_generation_distribution.png",
-        "Figure 3. Generational distribution across six latent civic engagement profiles. Gen Z is disproportionately concentrated in the Isolated Disengaged and Politically Aware Isolated profiles."),
+    1: ("figures/conceptual_framework.png",
+        "Figure 1. Conceptual framework. The primary relationship between in-person socialization (IV) and volunteering (DV) is moderated by generational cohort. Three-way interactions test whether education, employment, civic social media use, and the COVID-19 period further condition this relationship. Three analytic stages provide methodological triangulation."),
+    2: ("figures/fig1_pred_prob.png",
+        "Figure 2. Predicted probability of volunteering by in-person socialization frequency and generation, from survey-weighted logistic regression (Model 1). The steep initial rise illustrates the First Step Effect; Gen Z's flattening beyond moderate socialization illustrates the generational plateau. Shaded bands represent 95% confidence intervals."),
+    3: ("figures/fig4_ame_first_step.png",
+        "Figure 3. The First Step Effect: Average Marginal Effect of transitioning from no socialization to minimal socialization (few times per year) on volunteering probability, by generation. The effect is universal across all five cohorts (7.3 to 10.3 percentage points). Error bars represent 95% confidence intervals."),
+    4: ("figures/fig2_lpa_heatmap.png",
+        "Figure 4. Civic engagement profile characteristics from latent profile analysis. All values are normalized to a 0\u2013100 scale for cross-indicator comparability. The green column shows volunteering rate (outcome variable, not used as an LPA indicator). Color intensity reflects within-indicator relative magnitude."),
+    5: ("figures/fig3_lpa_gen_dist.png",
+        "Figure 5. Generational distribution across six latent civic engagement profiles. Over half of Gen Z (50.6%) occupies the two socially disconnected profiles (Isolated Disengaged and Politically Aware Isolated), while only 3.7% reaches Fully Engaged status."),
 }
 
 
+TABLE_NOTES = {
+    1: "Note. Survey-weighted estimates. Minimal socialization = reported socializing not at all or a few times per year. Civic SM = used social media for civic or political purposes. Test statistics are design-corrected F-tests.\n*p < .05. **p < .01. ***p < .001.",
+    2: "Note. OR = odds ratio. CI = confidence interval. Survey-weighted logistic regression (quasibinomial). All models control for age, sex, race/ethnicity, education (BA+), employment, marital status, family income (log), metropolitan status, region, and post-COVID period. Interaction Wald tests use design-corrected F-statistics. McFadden pseudo R² computed as 1 − (deviance / null deviance).\n*p < .05. **p < .01. ***p < .001.",
+    3: "Note. AME = average marginal effect; pp = percentage points; SE = standard error; CI = confidence interval. AMEs represent the estimated change in volunteering probability for the transition from \"Not at all\" to \"Few times/year\" socialization, computed via the marginaleffects package with survey weights.",
+    4: "Note. EII = spherical, equal volume parameterization. BIC = Bayesian information criterion. ΔBIC = improvement from the previous model. Entropy reported for the selected model only. Model selection conducted on a random subsample (n = 20,000) and refit to the full sample (N = 197,497).",
+    5: "Note. Profile labels assigned post hoc based on indicator patterns. Continuous indicators reported as M (SD); binary indicators as percentages. Volunteering rate = proportion who volunteered in the past 12 months (not used as an LPA indicator).",
+    6: "Note. Survey-weighted estimates. Vol. = volunteering rate (%). No Soc. = reported socializing not at all (%). Low Soc. = reported socializing a few times per year or less (%). SE in parentheses. The 2021 wave was administered during the COVID-19 pandemic.",
+}
+
+
+def _set_cell_borders(cell, top=None, bottom=None, left=None, right=None):
+    """Set individual cell borders. Each border param is a dict: {'sz': '4', 'val': 'single', 'color': '000000'} or None to remove."""
+    tc = cell._tc
+    tcPr = tc.get_or_add_tcPr()
+    tcBorders = tcPr.find(qn("w:tcBorders"))
+    if tcBorders is None:
+        tcBorders = tc.makeelement(qn("w:tcBorders"), {})
+        tcPr.append(tcBorders)
+    for edge, attrs in [("top", top), ("bottom", bottom), ("left", left), ("right", right)]:
+        # Remove existing
+        for existing in tcBorders.findall(qn(f"w:{edge}")):
+            tcBorders.remove(existing)
+        if attrs:
+            el = tc.makeelement(qn(f"w:{edge}"), {
+                qn("w:val"): attrs.get("val", "single"),
+                qn("w:sz"): attrs.get("sz", "4"),
+                qn("w:space"): "0",
+                qn("w:color"): attrs.get("color", "000000"),
+            })
+            tcBorders.append(el)
+        else:
+            # Set to none (remove border)
+            el = tc.makeelement(qn(f"w:{edge}"), {
+                qn("w:val"): "none",
+                qn("w:sz"): "0",
+                qn("w:space"): "0",
+                qn("w:color"): "000000",
+            })
+            tcBorders.append(el)
+
+
 def add_table_from_csv(doc, table_num):
-    """Insert an APA-formatted table from CSV data."""
+    """Insert an APA 7th edition formatted table from CSV data.
+
+    APA 7th table rules:
+    - NO vertical lines anywhere
+    - Horizontal lines: top of table, below header row, bottom of table ONLY
+    - Table number: bold, italic (e.g., "Table 1")
+    - Table title: italic, title case
+    - Table note: flush left, "Note." in italic
+    - Font: Times New Roman 10pt in cells, 12pt for title
+    - Single-spaced within cells
+    """
     csv_path = BASE_DIR / TABLE_FILES[table_num]
     if not csv_path.exists():
-        # Fallback: add placeholder
         p = doc.add_paragraph()
-        run = p.add_run(f"[Table {table_num} — data file not found]")
+        run = p.add_run(f"[Table {table_num} — data file not found: {csv_path}]")
         set_run_font(run, italic=True)
         return
 
-    # Table title (APA: italic, above table)
+    # --- Table number (APA: bold, italic, on its own line) ---
     title_text = TABLE_TITLES.get(table_num, f"Table {table_num}")
     title_lines = title_text.split("\n")
     p = doc.add_paragraph()
-    set_paragraph_spacing(p, before=12, after=4, line_spacing=2.0)
+    set_paragraph_spacing(p, before=12, after=0, line_spacing=2.0)
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    # "Table X" line — bold italic
     run = p.add_run(title_lines[0])
     set_run_font(run, bold=True, italic=True, size=12)
+
+    # --- Table title (APA: italic, title case, on next line) ---
     if len(title_lines) > 1:
-        run = p.add_run("\n" + title_lines[1])
+        p = doc.add_paragraph()
+        set_paragraph_spacing(p, before=0, after=4, line_spacing=2.0)
+        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        run = p.add_run(title_lines[1])
         set_run_font(run, italic=True, size=12)
 
-    # Read CSV
+    # --- Read CSV ---
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
         rows = list(reader)
@@ -236,44 +300,95 @@ def add_table_from_csv(doc, table_num):
     n_cols = len(headers)
     n_rows = len(data_rows) + 1  # +1 for header
 
-    # Create table
+    # --- Create table (no built-in style — we control all borders) ---
     table = doc.add_table(rows=n_rows, cols=n_cols)
-    table.style = "Table Grid"
+    table.style = "Normal Table"
 
-    # Style: remove vertical borders, keep horizontal (APA)
+    # Remove all default table borders at the table level
     tbl = table._tbl
     tblPr = tbl.tblPr if tbl.tblPr is not None else tbl._add_tblPr()
-    # Set table width to auto-fit
+
+    # Set table width to 100% of page
     tblW = tblPr.find(qn("w:tblW"))
     if tblW is None:
         tblW = tbl.makeelement(qn("w:tblW"), {})
         tblPr.append(tblW)
-    tblW.set(qn("w:w"), "0")
-    tblW.set(qn("w:type"), "auto")
+    tblW.set(qn("w:w"), "5000")
+    tblW.set(qn("w:type"), "pct")
 
-    # Header row
+    # Remove table-level borders entirely
+    tblBorders = tblPr.find(qn("w:tblBorders"))
+    if tblBorders is not None:
+        tblPr.remove(tblBorders)
+    tblBorders = tbl.makeelement(qn("w:tblBorders"), {})
+    for edge in ["top", "left", "bottom", "right", "insideH", "insideV"]:
+        el = tbl.makeelement(qn(f"w:{edge}"), {
+            qn("w:val"): "none", qn("w:sz"): "0",
+            qn("w:space"): "0", qn("w:color"): "000000"
+        })
+        tblBorders.append(el)
+    tblPr.append(tblBorders)
+
+    # Define border styles
+    RULE = {"val": "single", "sz": "8", "color": "000000"}  # thin black line
+    NONE = None  # no border
+
+    # --- Header row ---
     for j, header in enumerate(headers):
         cell = table.rows[0].cells[j]
         cell.text = ""
         p = cell.paragraphs[0]
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER if j > 0 else WD_ALIGN_PARAGRAPH.LEFT
         run = p.add_run(header)
         set_run_font(run, bold=True, size=10)
-        set_paragraph_spacing(p, before=0, after=0, line_spacing=1.0)
+        set_paragraph_spacing(p, before=2, after=2, line_spacing=1.0)
+        # APA borders: top rule + bottom rule on header
+        _set_cell_borders(cell, top=RULE, bottom=RULE, left=NONE, right=NONE)
 
-    # Data rows
+    # --- Data rows ---
     for i, row_data in enumerate(data_rows):
+        is_last_row = (i == len(data_rows) - 1)
         for j, val in enumerate(row_data):
+            if j >= n_cols:
+                continue
             cell = table.rows[i + 1].cells[j]
             cell.text = ""
             p = cell.paragraphs[0]
-            # First column left-aligned, rest centered
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT if j == 0 else WD_ALIGN_PARAGRAPH.CENTER
             run = p.add_run(val)
+            # Indent sub-rows (starting with spaces)
+            is_subrow = val.startswith("  ")
             set_run_font(run, size=10)
-            set_paragraph_spacing(p, before=0, after=0, line_spacing=1.0)
+            set_paragraph_spacing(p, before=1, after=1, line_spacing=1.0)
+            # APA borders: only bottom rule on last row; no vertical lines ever
+            _set_cell_borders(
+                cell,
+                top=NONE,
+                bottom=RULE if is_last_row else NONE,
+                left=NONE,
+                right=NONE
+            )
 
-    # Note line below table (spacing)
+    # --- Table note (APA: flush left, "Note." italic, then regular text) ---
+    note_text = TABLE_NOTES.get(table_num, "")
+    if note_text:
+        for note_line in note_text.split("\n"):
+            p = doc.add_paragraph()
+            set_paragraph_spacing(p, before=2, after=0, line_spacing=2.0)
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            if note_line.startswith("Note."):
+                run = p.add_run("Note. ")
+                set_run_font(run, italic=True, size=10)
+                run2 = p.add_run(note_line[6:])
+                set_run_font(run2, size=10)
+            elif note_line.startswith("*"):
+                run = p.add_run(note_line)
+                set_run_font(run, size=10)
+            else:
+                run = p.add_run(note_line)
+                set_run_font(run, size=10)
+
+    # Spacing after table
     p = doc.add_paragraph()
     set_paragraph_spacing(p, before=4, after=12, line_spacing=2.0)
 

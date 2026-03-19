@@ -14,7 +14,7 @@ Respondents with missing values on the key independent variable (CESOCIALIZE) we
 
 ### Dependent Variable
 
-Volunteering status was measured using VLSTATUS, which asks whether the respondent "did any volunteer activities through or for an organization" in the past 12 months (1 = volunteered, 2 = did not volunteer). This measure was dichotomized for logistic regression and treated as an external validation variable for the latent profile analysis.
+Volunteering status was measured using VLSTATUS, which asks whether the respondent "did any volunteer activities through or for an organization" in the past 12 months (1 = volunteered, 2 = did not volunteer). This measure was dichotomized for logistic regression and treated as an external criterion variable for the latent profile analysis.
 
 ### Key Independent Variable
 
@@ -49,7 +49,7 @@ Models controlled for age (continuous), sex (female = 1), race/ethnicity (White 
 
 ## Analytic Strategy
 
-The analysis proceeds through three integrated stages, each addressing a distinct research question while providing methodological triangulation.
+The analysis proceeds through two integrated stages, each addressing a distinct research question while providing methodological triangulation.
 
 ### Stage 1: Survey-Weighted Logistic Regression (RQ1)
 
@@ -59,19 +59,11 @@ We report odds ratios and average marginal effects (AMEs) computed via the `marg
 
 ### Stage 2: Latent Profile Analysis (RQ2)
 
-To address RQ2, we employ Latent Profile Analysis (LPA) to identify distinct civic engagement typologies using six standardized indicators from the pooled four-wave sample. LPA is a model-based clustering technique that identifies subgroups of individuals with similar patterns across multiple indicators (Collins & Lanza, 2010; Muthén & Muthén, 2000). We evaluate models with 2–7 profiles using varying variances and zero covariances (Vermunt & Magidson, 2002), selecting the optimal number based on Bayesian Information Criterion (BIC), entropy, and Bootstrap Likelihood Ratio Test (BLRT). Given the large sample size (*N* > 200,000), initial model selection is conducted on a random subsample of 20,000 cases, with the selected model refit to the full sample.
-
-After identifying profiles, we characterize each by its indicator means on the original scale, examine the generational distribution across profiles, compare volunteering rates by profile and generation, and assess whether profile distributions shifted between pre- and post-COVID periods.
-
-### Stage 3: Gradient Boosting with TreeSHAP (RQ3)
-
-To address RQ3, we train an XGBoost gradient boosting classifier (Friedman, 2001) predicting volunteering from the same predictors used in the regression models, including post-COVID as a feature. This nonparametric approach makes no assumptions about functional form, automatically captures interactions, and provides a complementary test of predictor importance. Model performance is evaluated using AUC on a held-out test set (20% split).
-
-Feature importance is decomposed using TreeSHAP (Lundberg & Lee, 2017; Lundberg et al., 2020), which assigns each predictor a Shapley value representing its marginal contribution to each prediction. We report mean |SHAP| values for the full sample and by generation, and generate dependence plots for socialization that reveal threshold effects. This validates whether the patterns observed in the parametric regression—particularly the First Step Effect and generational variation—are also captured by a nonlinear model without imposed interaction structure.
+To address RQ2, we employ Latent Profile Analysis (LPA) to identify distinct civic engagement typologies using six standardized indicators (Collins & Lanza, 2010). We evaluate models with 2–7 profiles using the EII parameterization, selecting the optimal number based on BIC, entropy, and BLRT. Given the large sample size, model selection is conducted on a random subsample of 20,000 cases, with the selected model refit to the full sample. Profiles are characterized by indicator means, generational distribution, volunteering rates, and pre/post-COVID stability.
 
 ### Software
 
-All regression analyses were conducted in R (version 4.4.x) using the `survey` package (Lumley, 2020) for design-based estimation and the `marginaleffects` package (Arel-Bundock, 2023) for AME computation. LPA was estimated using the `mclust` package (Scrucca et al., 2016). XGBoost models were trained in Python (version 3.11) using the `xgboost` library (Chen & Guestrin, 2016) with learning rate = 0.05, max depth = 6, 500 boosting rounds, and L2 regularization (lambda = 1.0). The train/test split was stratified by the outcome variable (80/20). SHAP values were computed using the `shap` library (Lundberg et al., 2020).
+Regression analyses used R with the `survey` (Lumley, 2020) and `marginaleffects` (Arel-Bundock, 2023) packages. LPA used `mclust` (Scrucca et al., 2016).
 
 ### Robustness Checks
 
