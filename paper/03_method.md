@@ -32,16 +32,9 @@ Four theoretically motivated moderators were examined. *Education* was measured 
 
 ### Latent Profile Analysis Indicators
 
-Six indicators were used to construct civic engagement typologies:
+Six indicators were used to construct civic engagement typologies. Three are binary: boycotting a product for social or political reasons (CEBOYCOTT), contacting a public official (CEPUBOFF), and donating to a charitable or religious organization (VLDONATE). Two are ordinal (scaled 1–6): frequency of discussing politics (CEPOLCONV) and frequency of in-person social contact (CESOCIALIZE). The sixth, organizational membership (VLMEMBERN), is a count of the number of organizations to which the respondent belongs (respondents reporting no membership via VLMEMBER were coded as 0).
 
-1. **Boycotting** (CEBOYCOTT): Whether the respondent boycotted a product for social or political reasons (binary).
-2. **Contacting officials** (CEPUBOFF): Whether the respondent contacted a public official (binary).
-3. **Political conversation** (CEPOLCONV): Frequency of discussing politics (ordinal, 1–6).
-4. **In-person socialization** (CESOCIALIZE): Frequency of in-person social contact (ordinal, 1–6).
-5. **Organizational membership** (VLMEMBERN): Number of organizations to which the respondent belongs (count; respondents reporting no membership via VLMEMBER were coded as 0).
-6. **Charitable donation** (VLDONATE): Whether the respondent donated to a charitable or religious organization (binary).
-
-All six indicators are available across all four survey waves with approximately 94% valid response rates. This set captures multiple dimensions of civic life—political action, social connection, institutional membership, and philanthropic behavior—enabling person-centered identification of distinct engagement patterns.
+All six indicators are available across all four survey waves with approximately 94% valid response rates. Together, these indicators span multiple dimensions of civic life (political action, social connection, institutional membership, and philanthropic behavior), enabling person-centered identification of distinct engagement patterns.
 
 ### Control Variables
 
@@ -67,4 +60,4 @@ Regression analyses used R with the `survey` (Lumley, 2020) and `marginaleffects
 
 ### Robustness Checks
 
-Three sets of robustness analyses tested the sensitivity of the regression findings. First, we compared the observed categorical AMEs to predictions from a smooth log-linear specification to confirm that the First Step Effect reflects a genuine threshold rather than an artifact of scale concavity. Second, we added organizational membership (VLMEMBERN) as a covariate to assess the extent to which the socialization pathway operates through institutional embeddedness. Third, we included a nonlinear age control (age-squared) alongside the generation variable to provide partial leverage against age-cohort confounding.
+We conducted three robustness analyses to test the sensitivity of the regression findings. To confirm that the First Step Effect reflects a genuine threshold rather than an artifact of scale concavity, we compared the observed categorical AMEs to predictions from a smooth log-linear specification. We also added organizational membership (VLMEMBERN) as a covariate to assess whether the socialization pathway operates through institutional embeddedness. A nonlinear age control (age-squared) was included alongside the generation variable to provide partial leverage against age-cohort confounding.

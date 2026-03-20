@@ -2,7 +2,7 @@
 
 <!-- Allocation: ~500 words (included in Lit Review allocation) -->
 
-The purpose of this study is to examine the association between in-person socialization frequency and volunteering across generational cohorts using four waves of nationally representative data from the Current Population Survey Civic Engagement and Volunteering Supplement (2017, 2019, 2021, 2023). We employ an integrated design that combines variable-centered regression and person-centered profiling to provide methodological triangulation. By spanning four waves that bracket the COVID-19 pandemic, this design allows us to distinguish structural cohort effects from pandemic-specific disruptions.
+This study examines the association between in-person socialization frequency and volunteering across generational cohorts using four waves of nationally representative data from the Current Population Survey Civic Engagement and Volunteering Supplement (2017, 2019, 2021, 2023). We employ an integrated design that combines variable-centered regression and person-centered profiling to provide methodological triangulation. By spanning four waves that bracket the COVID-19 pandemic, this design allows us to distinguish structural cohort effects from pandemic-specific disruptions.
 
 <!-- FIGURE:1 -->
 
