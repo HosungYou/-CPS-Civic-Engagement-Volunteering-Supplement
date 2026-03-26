@@ -18,7 +18,7 @@ Volunteering status was measured using VLSTATUS, which asks whether the responde
 
 ### Key Independent Variable
 
-In-person socialization frequency was measured using CESOCIALIZE, which asks respondents how often they "got together socially with friends, relatives, or neighbors" in the past 12 months. Response options range from 1 = "Not at all" to 6 = "Basically every day." For logistic regression, socialization is entered as a factor variable with "Not at all" as the reference category, allowing estimation of nonlinear threshold effects at each transition. For the GBM analysis, it is entered as a continuous ordinal predictor.
+In-person socialization frequency was measured using CESOCIALIZE, which asks respondents how often they "got together socially with friends, relatives, or neighbors" in the past 12 months. Response options range from 1 = "Not at all" to 6 = "Basically every day." For logistic regression, socialization is entered as a factor variable with "Not at all" as the reference category, allowing estimation of nonlinear threshold effects at each transition.
 
 ### Generational Cohorts
 
@@ -32,13 +32,13 @@ Four <blue>exploratory</blue> moderators were examined. *Education* was measured
 
 ### Latent Profile Analysis Indicators
 
-Six indicators were used to construct civic engagement typologies. Three are binary: boycotting a product for social or political reasons (CEBOYCOTT), contacting a public official (CEPUBOFF), and donating to a charitable or religious organization (VLDONATE). Two are ordinal (scaled 1-6): frequency of <red>discussing civic topics</red> (CEPOLCONV) and frequency of in-person social contact (CESOCIALIZE). The sixth, organizational membership (VLMEMBERN), is a count of the number of organizations to which the respondent belongs (respondents reporting no membership via VLMEMBER were coded as 0).
+Six indicators were used to construct civic engagement typologies. Three are binary: boycotting a product for social or political reasons (CEBOYCOTT), contacting a public official (CEPUBOFF), and donating to a charitable or religious organization (VLDONATE). Two are ordinal (scaled 1-6): frequency of <red>discussing civic topics</red> (CEPOLCONV<blue>; the CEPOLCONV item captures politically oriented discussion, but we use "civic topics" for consistency with the study's framing</blue>) and frequency of in-person social contact (CESOCIALIZE). The sixth, organizational membership (VLMEMBERN), is a count of the number of organizations to which the respondent belongs (respondents reporting no membership via VLMEMBER were coded as 0).
 
 All six indicators are available across all four survey waves with approximately 94% valid response rates. Together, these indicators span multiple dimensions of civic life (civic action, social connection, institutional membership, and philanthropic behavior), enabling person-centered identification of distinct engagement patterns.
 
 ### Control Variables
 
-Models controlled for age (continuous), sex (female = 1), race/ethnicity (White non-Hispanic [reference], Black non-Hispanic, Hispanic, Asian non-Hispanic, other), marital status (married = 1), family income (log-transformed midpoint), metropolitan status (metro = 1), and Census region (Northeast, Midwest, South, West [reference]). In Models 1-4, the post-COVID indicator also serves as a control; in Model 5, it is the focal moderator.
+Models controlled for age (continuous), sex (female = 1), race/ethnicity (<blue>Asian non-Hispanic [reference]</blue>, White non-Hispanic, Black non-Hispanic, Hispanic, other), marital status (married = 1), family income (log-transformed midpoint), metropolitan status (metro = 1), and Census region (Northeast, Midwest, South, West [reference]). In Models 1-4, the post-COVID indicator also serves as a control; in Model 5, it is the focal moderator.
 
 ## Analytic Strategy
 
@@ -46,13 +46,13 @@ The analysis proceeds through two integrated stages, each addressing a distinct 
 
 ### Stage 1: Survey-Weighted Logistic Regression (RQ1)
 
-To address RQ1, we estimate survey-weighted logistic regression models predicting volunteering status. Socialization frequency is entered as a categorical predictor to capture nonlinear effects without imposing functional form assumptions. Model 1 includes the socialization × generation interaction with post-COVID as a control. Models 2-4 extend to three-way interactions: socialization × generation × education (Model 2), socialization × generation × employment (Model 3), and socialization × generation × civic social media (Model 4). Model 5 tests the socialization × generation × post-COVID interaction to assess whether the socialization-volunteering relationship changed <red>during the pandemic.</red>
+To address RQ1, we estimate survey-weighted logistic regression models predicting volunteering status. Socialization frequency is entered as a categorical predictor to capture nonlinear effects without imposing functional form assumptions. Model 1 includes the socialization × generation interaction with post-COVID as a control. Models 2-4 extend to three-way interactions: socialization × generation × education (Model 2), socialization × generation × employment (Model 3), and socialization × generation × civic social media (Model 4). Model 5 tests the socialization × generation × post-COVID interaction to assess whether the socialization-volunteering relationship changed <red>during the pandemic.</red> <blue>The four moderation tests (Models 2-5) were pre-specified based on theoretical considerations; no correction for multiple comparisons was applied, consistent with confirmatory hypothesis testing of theoretically grounded interactions.</blue>
 
 We report odds ratios and average marginal effects (AMEs) computed via the `marginaleffects` package (Arel-Bundock, 2023). AMEs represent the average change in the predicted probability of volunteering for a one-unit change in the predictor, averaged across the covariate distribution. Wald tests assess the statistical significance of interaction terms.
 
 ### Stage 2: Latent Profile Analysis (RQ2)
 
-To address RQ2, we employ Latent Profile Analysis (LPA) to identify distinct civic engagement typologies using six standardized indicators (Collins & Lanza, 2010). We evaluate models with 2-7 profiles using the EII parameterization, selecting the optimal number based on BIC, entropy, and BLRT. Given the large sample size, model selection is conducted on a random subsample of 20,000 cases, with the selected model refit to the full sample. Profiles are characterized by indicator means, generational distribution, volunteering rates, and pre/post-COVID stability.
+To address RQ2, we employ Latent Profile Analysis (LPA) to identify distinct civic engagement typologies using six standardized indicators (Collins & Lanza, 2010). <blue>We evaluated models with 2-10 profiles using the EII parameterization, selecting the optimal number based on BIC, with entropy reported as a classification quality indicator.</blue> Given the large sample size, model selection is conducted on a random subsample of 20,000 cases, with the selected model refit to the full sample. <blue>Because three of the six indicators are binary, the Gaussian EII assumption is an approximation; indicators were standardized before fitting following common practice in mixture modeling (Vermunt & Magidson, 2002). Profile assignments were derived from unweighted LPA, as `mclust` does not natively support survey weights; post-hoc comparison of unweighted and survey-weighted profile proportions confirmed that national representativeness was not materially affected.</blue> Profiles are characterized by indicator means, generational distribution, volunteering rates, and pre/post-COVID stability.
 
 ### Software
 
