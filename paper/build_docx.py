@@ -13,7 +13,7 @@ import os
 import csv
 from pathlib import Path
 from docx import Document
-from docx.shared import Pt, Inches, Cm
+from docx.shared import Pt, Inches, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml.ns import qn
 
@@ -89,11 +89,28 @@ def add_body_paragraph(doc, text, indent_first_line=True):
     return p
 
 
-def add_formatted_runs(paragraph, text):
+def add_formatted_runs(paragraph, text, color=None):
     """Parse markdown inline formatting and add runs.
-    Handles **bold**, *italic*, and plain text.
+    Handles **bold**, *italic*, <red>colored</red>, <blue>colored</blue>,
+    and plain text.  Color tags may nest bold/italic.
     """
-    # Pattern: **bold** or *italic* or plain text
+    # First split by color tags, then handle inline formatting in each part
+    color_pattern = r'(<red>.*?</red>|<blue>.*?</blue>)'
+    segments = re.split(color_pattern, text)
+
+    for seg in segments:
+        if seg.startswith('<red>') and seg.endswith('</red>'):
+            _add_inline_runs(paragraph, seg[5:-6],
+                             color=RGBColor(0xFF, 0x00, 0x00))
+        elif seg.startswith('<blue>') and seg.endswith('</blue>'):
+            _add_inline_runs(paragraph, seg[6:-7],
+                             color=RGBColor(0x00, 0x00, 0xFF))
+        else:
+            _add_inline_runs(paragraph, seg, color=color)
+
+
+def _add_inline_runs(paragraph, text, color=None):
+    """Handle **bold**, *italic*, and plain text; apply optional color."""
     pattern = r'(\*\*(.+?)\*\*|\*(.+?)\*|([^*]+))'
     parts = re.finditer(pattern, text)
 
@@ -101,12 +118,18 @@ def add_formatted_runs(paragraph, text):
         if match.group(2):  # **bold**
             run = paragraph.add_run(match.group(2))
             set_run_font(run, bold=True)
+            if color:
+                run.font.color.rgb = color
         elif match.group(3):  # *italic*
             run = paragraph.add_run(match.group(3))
             set_run_font(run, italic=True)
+            if color:
+                run.font.color.rgb = color
         elif match.group(4):  # plain text
             run = paragraph.add_run(match.group(4))
             set_run_font(run)
+            if color:
+                run.font.color.rgb = color
 
 
 def add_block_quote(doc, text):
